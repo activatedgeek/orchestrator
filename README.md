@@ -26,12 +26,12 @@ This project sets up the following cluster and frameworks:
   * GUI accessible at `IP_ADDRESS_OF_ANY_MASTER:8080`
 * [`Chronos`](http://mesos.github.io/chronos/)
 	* GUI accessible at `IP_ADDRESS_OF_ANY_MASTER:4400`
+* [`Weave`](http://weave.works) (for automated service discovery)
 
 ##### Future releases
 
 Here is a list of features I am planning to support soon:
 * Configurable `Jenkins` support for continuous delivery
-* `Weave` support for automated service discovery and load balancing
 * A configurable edge `Nginx` reverse proxy to route to internal
 services transparently
 
