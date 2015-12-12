@@ -1,0 +1,31 @@
+##
+# notification handlers for mesos
+#
+---
+- name: restart mesos-slave
+  become: yes
+  service:
+    name: mesos-slave
+    state: restarted
+    enabled: yes
+
+- name: restart mesos-master
+  become: yes
+  service:
+    name: mesos-master
+    state: restarted
+    enabled: yes
+
+- name: restart marathon
+  become: yes
+  service:
+    name: marathon
+    state: restarted
+    enabled: yes
+
+- name: restart chronos
+  become: yes
+  service:
+    name: chronos
+    state: restarted
+    enabled: yes

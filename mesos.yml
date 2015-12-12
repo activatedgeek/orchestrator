@@ -1,0 +1,12 @@
+#
+# Deploy the mesos cluster
+#
+# Mesos + Weave + Docker
+#
+---
+
+- hosts: all
+  gather_facts: true
+
+- include: mesos-master.yml
+- include: mesos-slave.yml

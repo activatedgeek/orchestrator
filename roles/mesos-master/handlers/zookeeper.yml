@@ -1,0 +1,30 @@
+##
+# All zookeeper related operations
+#
+---
+- name: start zookeeper
+  become: yes
+  service:
+    name: zookeeper
+    state: started
+    enabled: yes
+
+- name: stop zookeeper
+  become: yes
+  service:
+    name: zookeeper
+    state: stopped
+
+- name: restart zookeeper
+  become: yes
+  service:
+    name: zookeeper
+    state: restarted
+    enabled: yes
+
+- name: reload zookeeper
+  become: yes
+  service:
+    name: zookeeper
+    state: reloaded
+    enabled: yes

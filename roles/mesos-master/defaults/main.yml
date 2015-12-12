@@ -1,0 +1,3 @@
+mesos:
+  # default cluster name
+  cluster_name: mycluster

@@ -1,0 +1,106 @@
+##
+# Setup mesos master related packages
+#
+---
+
+- name: install marathon and chronos
+  become: yes
+  apt:
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - marathon
+    - chronos
+
+- name: setup zookeeper master id
+  become: yes
+  template:
+    src: zookeeper.myid.j2
+    dest: /etc/zookeeper/conf/myid
+  notify:
+    - restart zookeeper
+
+- name: setup zookeeper config
+  become: yes
+  template:
+    src: zookeeper.zoo.cfg.j2
+    dest: /etc/zookeeper/conf/zoo.cfg
+  notify:
+    - restart zookeeper
+
+- name: setup mesos zookeeper namespace
+  become: yes
+  template:
+    src: mesos.zk.j2
+    dest: /etc/mesos/zk
+  notify:
+    - restart mesos-master
+    - restart zookeeper
+
+- name: setup mesos-master quorum
+  become: yes
+  template:
+    src: mesos-master.quorum.j2
+    dest: /etc/mesos-master/quorum
+  notify:
+    - restart mesos-master
+
+- name: create marathon config dir
+  become: yes
+  file:
+    path: /etc/marathon/conf
+    state: directory
+    recurse: yes
+
+- name: setup mesos clustername
+  become: yes
+  copy:
+    content: '{{ mesos.cluster_name }}'
+    dest: /etc/mesos-master/cluster
+  notify:
+    - restart mesos-master
+
+- name: setup mesos-master, marathon hostname, ip
+  become: yes
+  template:
+    src: mesos-master.hostname.j2
+    dest: '{{ item }}'
+  with_items:
+    - /etc/mesos-master/hostname
+    - /etc/mesos-master/ip
+    - /etc/marathon/conf/hostname
+    - /etc/chronos/conf/hostname
+  notify:
+    - restart mesos-master
+    - restart marathon
+    - restart chronos
+
+- name: update executor timeout for docker
+  become: yes
+  copy:
+    content: '600000'
+    dest: /etc/marathon/conf/task_launch_timeout
+  notify:
+    - restart marathon
+
+- name: stop mesos-slave
+  become: yes
+  service:
+    name: mesos-slave
+    state: stopped
+
+- name: manual override for init.d scripts
+  become: yes
+  copy:
+    content: manual
+    dest: /etc/init/mesos-slave.override
+  notify:
+    - restart mesos-master
+    - restart marathon
+
+- name: check for chronos online
+  become: yes
+  service:
+    name: chronos
+    state: started
+    enabled: yes

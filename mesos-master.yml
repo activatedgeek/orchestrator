@@ -1,0 +1,14 @@
+##
+# Install the mesos master cluster
+#
+---
+- hosts: mesos-master
+  gather_facts: yes
+  tasks:
+    - include: packages/common.yml
+
+- hosts: mesos-master
+  vars:
+    network_interface: 'eth1'
+  roles:
+    - mesos-master
