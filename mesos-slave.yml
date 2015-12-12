@@ -7,10 +7,6 @@
 
 - hosts: mesos-slave
   gather_facts: yes
-  tasks:
-    - include: packages/common.yml
-  handlers:
-    - include: handlers/docker.yml
 
 - hosts: mesos-slave
   vars:
