@@ -4,8 +4,6 @@
 ---
 - hosts: mesos-master
   gather_facts: yes
-  tasks:
-    - include: packages/common.yml
 
 - hosts: mesos-master
   vars:
