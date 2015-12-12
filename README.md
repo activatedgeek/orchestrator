@@ -7,7 +7,7 @@ management via `Mesos` (and other frameworks on top) which can
 get you setup for easy and reproducible development and production
 environments.
 
-**NOTE**: Under active development. Cheers!
+**Under active development. Cheers!**
 
 ### Prerequisites
 
@@ -21,21 +21,22 @@ The project depends on the following packages:
 This project sets up the following cluster and frameworks:
 * [`Mesos`](http://mesos.apache.org)
   * GUI accessible at `IP_ADDRESS_OF_ANY_MASTER:5050`
-* [`Docker`](https://www.docker.com) support for `Mesos`
 * [`Marathon`](https://mesosphere.github.io/marathon/)
   * GUI accessible at `IP_ADDRESS_OF_ANY_MASTER:8080`
 * [`Chronos`](http://mesos.github.io/chronos/)
 	* GUI accessible at `IP_ADDRESS_OF_ANY_MASTER:4400`
 
+* [`Docker`](https://www.docker.com) support for `Mesos`
+* [`Weave`](http://weave.works) (for automated service discovery of containers and DNS load balancing)
+
 ##### Future releases
 
 Here is a list of features I am planning to support soon:
 * Configurable `Jenkins` support for continuous delivery
-* `Weave` support for automated service discovery and load balancing
 * A configurable edge `Nginx` reverse proxy to route to internal
 services transparently
 
-More suggestions and industry practices are welcome!
+I am more than happy to accept any configurable changes in the modules.
 
 ### Setup
 
@@ -82,6 +83,56 @@ To provision only the slave nodes:
 ```
 > ANSIBLE_PLAYBOOK=mesos-slave.yml vagrant provision
 ```
+
+#### Provisioning Variables
+
+* `mesos.cluster_name`: name of the cluster (default: `mycluster`)
+* `weave.dns_domain`: name of the weaveDNS domain (default: `mycluster.local.`)
+* `network_interface`: network interface device (default: `eth1`)
+
+### Example Usage
+
+After you have provisioned, you will want to provision applications via the
+[`Marathon REST API`](https://mesosphere.github.io/marathon/docs/rest-api.html).
+```json
+{
+  "id": "test-outyet",
+  "cpus": 0.5,
+  "mem": 10.0,
+  "instances": 5,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "outyet",
+      "network": "BRIDGE",
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "hostPort": 0,
+          "servicePort": 0,
+          "protocol": "tcp"
+        }
+      ],
+      "parameters": [
+        { "key": "hostname", "value": "outyet.mycluster.local" }
+      ]
+    }
+  }
+}
+```
+
+Now you can `POST` this JSON to marathon at:
+```
+> curl -X POST IP_OF_ANY_MASTER:8080/v2/apps \
+       -d @outyet.json \
+       -H "Content-type: application/json"
+```
+
+#### Notes
+* It is important to send the hostname parameter so that
+weave can register the docker container in its DNS service.
+* The `portMappings` are only essential for access outside the
+docker containers.
 
 ### Contribution Guidelines ###
 
