@@ -7,11 +7,7 @@
 
 - hosts: mesos-slave
   gather_facts: yes
-  tasks:
-    - include: packages/common.yml
 
 - hosts: mesos-slave
-  vars:
-    network_interface: 'eth1'
   roles:
     - mesos-slave

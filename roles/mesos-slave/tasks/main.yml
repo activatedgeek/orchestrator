@@ -8,6 +8,27 @@
     name: zookeeper
     state: absent
 
+- name: install weave
+  become: yes
+  shell: curl -L git.io/weave -o /usr/local/bin/weave
+
+- name: update executable permissions for weave
+  become: yes
+  file:
+    path: /usr/local/bin/weave
+    mode: 'a+x'
+    state: touch
+
+- name: bootstrap weave router and proxy cluster
+  become: yes
+  shell: "weave launch --dns-domain={{ weave.dns_domain }} --init-peer-count={{ groups['mesos-slave'] | length }}; true"
+  when: ansible_hostname == groups['mesos-slave'][0]
+
+- name: join weave cluster
+  become: yes
+  shell: "weave launch --dns-domain={{ weave.dns_domain }} --init-peer-count={{ groups['mesos-slave'] | length }} {{ hostvars[groups['mesos-slave'][0]]['ansible_' + network_interface].ipv4.address }}; true"
+  when: ansible_hostname != groups['mesos-slave'][0]
+
 - name: setup mesos zookeeper namespace
   become: yes
   template:
@@ -35,11 +56,11 @@
   notify:
     - restart mesos-slave
 
-- name: setup mesos-slave hostname, ip
+- name: setup mesos-weave-docker socket connection
   become: yes
   copy:
-    content: docker,mesos
-    dest: /etc/mesos-slave/containerizers
+    content: /var/run/weave/weave.sock
+    dest: /etc/mesos-slave/docker_socket
   notify:
     - restart mesos-slave
 

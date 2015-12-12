@@ -1,0 +1,6 @@
+# network interface of machines
+network_interface: 'eth1'
+
+weave:
+  # default domain name @NOTE always end with a '.'
+  dns_domain: 'mycluster.local.'

@@ -6,7 +6,11 @@
 ---
 
 - hosts: all
-  gather_facts: true
+  gather_facts: yes
+  tasks:
+    - include: packages/common.yml
+  handlers:
+    - include: handlers/docker.yml
 
 - include: mesos-master.yml
 - include: mesos-slave.yml
