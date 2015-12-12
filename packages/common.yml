@@ -65,6 +65,21 @@
     - docker-engine
     - mesos
 
+- name: add docker group for non-sudo access
+  become: yes
+  group:
+    name: docker
+    state: present
+
+- name: add current user to the docker group
+  become: yes
+  user:
+    name: '{{ ansible_ssh_user }}'
+    groups: docker
+    append: yes
+  notify:
+    - restart docker
+
 - name: add message of the day!
   become: yes
   template:
