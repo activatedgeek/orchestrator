@@ -6,7 +6,5 @@
   gather_facts: yes
 
 - hosts: mesos-master
-  vars:
-    network_interface: 'eth1'
   roles:
     - mesos-master
