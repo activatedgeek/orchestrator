@@ -64,3 +64,24 @@
     dest: /etc/init/mesos-master.override
   notify:
     - restart mesos-slave
+
+- name: install weave
+  become: yes
+  shell: curl -L git.io/weave -o /usr/local/bin/weave
+
+- name: update executable permissions for weave
+  become: yes
+  file:
+    path: /usr/local/bin/weave
+    mode: 'a+x'
+    state: touch
+
+- name: bootstrap weave router and proxy cluster
+  become: yes
+  shell: "weave launch --init-peer-count={{ groups['mesos-slave'] | length }}; true"
+  when: ansible_hostname == groups['mesos-slave'][0]
+
+- name: join weave cluster
+  become: yes
+  shell: "weave launch --init-peer-count={{ groups['mesos-slave'] | length }} {{ hostvars[groups['mesos-slave'][0]]['ansible_' + network_interface].ipv4.address }}; true"
+  when: ansible_hostname != groups['mesos-slave'][0]
