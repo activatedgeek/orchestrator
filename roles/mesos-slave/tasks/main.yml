@@ -21,12 +21,12 @@
 
 - name: bootstrap weave router and proxy cluster
   become: yes
-  shell: "weave launch --init-peer-count={{ groups['mesos-slave'] | length }}; true"
+  shell: "weave launch --dns-domain={{ weave.dns_domain }} --init-peer-count={{ groups['mesos-slave'] | length }}; true"
   when: ansible_hostname == groups['mesos-slave'][0]
 
 - name: join weave cluster
   become: yes
-  shell: "weave launch --init-peer-count={{ groups['mesos-slave'] | length }} {{ hostvars[groups['mesos-slave'][0]]['ansible_' + network_interface].ipv4.address }}; true"
+  shell: "weave launch --dns-domain={{ weave.dns_domain }} --init-peer-count={{ groups['mesos-slave'] | length }} {{ hostvars[groups['mesos-slave'][0]]['ansible_' + network_interface].ipv4.address }}; true"
   when: ansible_hostname != groups['mesos-slave'][0]
 
 - name: setup mesos zookeeper namespace
