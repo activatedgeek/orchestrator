@@ -29,14 +29,7 @@ This project sets up the following cluster and frameworks:
 * [`Docker`](https://www.docker.com) support for `Mesos`
 * [`Weave`](http://weave.works) (for automated service discovery of containers and DNS load balancing)
 
-##### Future releases
-
-Here is a list of features I am planning to support soon:
-* Configurable `Jenkins` support for continuous delivery
-* A configurable edge `Nginx` reverse proxy to route to internal
-services transparently
-
-I am more than happy to accept any configurable changes in the modules.
+**Please check for new features list [here](https://github.com/activatedgeek/bare-bones-mesos/issues/1)**
 
 ### Setup
 
