@@ -6,13 +6,14 @@ def log (level, msg)
   puts "[#{level}] #{msg}"
 end
 
-#
+##
 # Available Options (use the same options when using "vagrant destroy")
 #
 # MESOS_MASTER_COUNT=
 # MESOS_SLAVE_COUNT=
 # IP_CIDR_PREFIX=
 # ANSIBLE_PLAYBOOK=
+# ANSIBLE_TAGS=taga,tagb,tagc
 #
 $MESOS_MASTER_COUNT = (ENV['MESOS_MASTER_COUNT'] || 1).to_i
 log("vars", "MESOS_MASTER_COUNT=#{$MESOS_MASTER_COUNT}")
@@ -25,6 +26,9 @@ log("vars", "IP_CIDR_PREFIX='#{$IP_CIDR_PREFIX}'")
 
 $ANSIBLE_PLAYBOOK = ENV['ANSIBLE_PLAYBOOK'] || "site.yml"
 log("vars", "ANSIBLE_PLAYBOOK='#{$ANSIBLE_PLAYBOOK}'")
+
+$ANSIBLE_TAGS = ENV['ANSIBLE_TAGS'] || "all"
+log("vars", "ANSIBLE_TAGS='#{$ANSIBLE_TAGS}'")
 
 $IP = IPAddr.new($IP_CIDR_PREFIX)
 # skip first address
@@ -84,10 +88,11 @@ Vagrant.configure(2) do |config|
       if s_id === $MESOS_SLAVE_COUNT
         slave.vm.provision :ansible do |ansible|
           # ansible.verbose = 'v'
-          ansible.playbook = $ANSIBLE_PLAYBOOK
           # ansible.inventory_file = ''
+          ansible.playbook = $ANSIBLE_PLAYBOOK
           ansible.groups = ansibleGroups
           ansible.limit = 'all'
+          ansible.tags = $ANSIBLE_TAGS
         end
       end
     end

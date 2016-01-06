@@ -16,15 +16,23 @@
     - vim
     - ntp
     - python-pip
+  tags:
+    - common
 
 - name: install python-dev
   become: yes
   apt:
     name: python-dev
     state: latest
+  tags:
+    - common
+    - python
 
 - name: add message of the day!
   become: yes
   template:
     src: ../templates/motd.j2
     dest: /etc/motd
+  tags:
+    - common
+    - motd

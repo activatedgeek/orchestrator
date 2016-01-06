@@ -6,10 +6,14 @@
   become: yes
   apt_repository:
     repo: ppa:webupd8team/java
+  tags:
+    - java
 
 - name: update debconf for java
   become: yes
   shell: echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
+  tags:
+    - java
 
 - name: install java8
   become: yes
@@ -17,3 +21,5 @@
     name: oracle-java8-installer
     state: latest
     update_cache: yes
+  tags:
+    - java

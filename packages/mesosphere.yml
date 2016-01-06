@@ -8,12 +8,16 @@
     keyserver: hkp://keyserver.ubuntu.com:80
     id: E56151BF
     state: present
+  tags:
+    - mesosphere
 
 - name: add apt repo for mesosphere
   become: yes
   apt_repository:
     repo: deb http://repos.mesosphere.io/ubuntu trusty main
     state: present
+  tags:
+    - mesosphere
 
 ##
 # @NOTE: mesos metapackage installs zookeeper as well
@@ -28,6 +32,8 @@
     - mesos
     - marathon
     - chronos
+  tags:
+    - mesosphere
 
 - name: manual override mesos services init.d scripts
   become: yes
@@ -40,6 +46,8 @@
     - /etc/init/marathon.override
     - /etc/init/chronos.override
     - /etc/init/zookeeper.override
+  tags:
+    - mesosphere
 
 ##
 # Stop all mesos related services after installation
@@ -57,3 +65,5 @@
     - marathon
     - chronos
     - zookeeper
+  tags:
+    - mesosphere

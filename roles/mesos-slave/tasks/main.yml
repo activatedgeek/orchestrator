@@ -7,11 +7,15 @@
   service:
     name: docker
     state: started
+  tags:
+    - docker
 
 - name: download weave
   get_url:
     url: https://github.com/weaveworks/weave/releases/download/latest_release/weave
     dest: /usr/local/bin/weave
+  tags:
+    - weave
 
 - name: update executable permissions for weave
   become: yes
@@ -19,6 +23,8 @@
     path: /usr/local/bin/weave
     mode: 'a+x'
     state: touch
+  tags:
+    - weave
 
 ##
 # the first node is the bootstrap node
@@ -28,6 +34,9 @@
   when: ansible_hostname == groups['mesos-slave'][0]
   notify:
     - restart mesos-slave
+  tags:
+    - weave
+    - weaveboot
 
 ##
 # all nodes other than the first one
@@ -38,6 +47,9 @@
   when: ansible_hostname != groups['mesos-slave'][0]
   notify:
     - restart mesos-slave
+  tags:
+    - weave
+    - weavejoin
 
 - name: setup mesos zookeeper namespace
   become: yes
@@ -46,6 +58,8 @@
     dest: /etc/mesos/zk
   notify:
     - restart mesos-slave
+  tags:
+    - mesos-slave
 
 - name: setup mesos-slave hostname, ip
   become: yes
@@ -57,6 +71,8 @@
     - /etc/mesos-slave/ip
   notify:
     - restart mesos-slave
+  tags:
+    - mesos-slave
 
 - name: setup mesos-slave hostname, ip
   become: yes
@@ -65,6 +81,8 @@
     dest: /etc/mesos-slave/containerizers
   notify:
     - restart mesos-slave
+  tags:
+    - mesos-slave
 
 - name: setup mesos-weave-docker socket connection
   become: yes
@@ -73,6 +91,8 @@
     dest: /etc/mesos-slave/docker_socket
   notify:
     - restart mesos-slave
+  tags:
+    - mesos-slave
 
 - name: update executor timeout for docker
   become: yes
@@ -81,9 +101,13 @@
     dest: /etc/mesos-slave/executor_registration_timeout
   notify:
     - restart mesos-slave
+  tags:
+    - mesos-slave
 
 - name: check start mesos-slave service
   become: yes
   service:
     name: mesos-slave
     state: started
+  tags:
+    - mesos-slave
