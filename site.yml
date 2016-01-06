@@ -1,14 +1,17 @@
 #
-# Deploy the mesos cluster
-#
-# Mesos + Weave + Docker
+# Deploy the cluster
 #
 ---
-
 - hosts: all
   gather_facts: yes
   tasks:
     - include: packages/common.yml
+
+- hosts: mesos
+  tasks:
+    - include: packages/docker.yml
+    - include: packages/java.yml
+    - include: packages/mesosphere.yml
   handlers:
     - include: handlers/docker.yml
 

@@ -16,73 +16,23 @@
     - vim
     - ntp
     - python-pip
+  tags:
+    - common
 
 - name: install python-dev
   become: yes
   apt:
     name: python-dev
     state: latest
-
-- name: add java 8 ppa
-  become: yes
-  apt_repository:
-    repo: ppa:webupd8team/java
-
-- name: update debconf for java
-  become: yes
-  shell: echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
-
-- name: add self signed keys for mesosphere and docker
-  become: yes
-  apt_key:
-    keyserver: '{{ item.keyserver }}'
-    id: '{{ item.id }}'
-    state: present
-  with_items:
-    - { keyserver: 'hkp://keyserver.ubuntu.com:80', id: 'E56151BF' }
-    - { keyserver: 'hkp://p80.pool.sks-keyservers.net:80', id: '58118E89F3A912897C070ADBF76221572C52609D' }
-
-- name: add apt repos for mesosphere and docker
-  become: yes
-  apt_repository:
-    repo: '{{ item }}'
-    state: present
-  with_items:
-    - deb http://repos.mesosphere.io/ubuntu trusty main
-    - deb https://apt.dockerproject.org/repo ubuntu-trusty main
-
-- name: update package cache
-  become: yes
-  apt:
-    update_cache: yes
-
-- name: install apt dependencies
-  become: yes
-  apt:
-    name: '{{ item }}'
-    state: latest
-  with_items:
-    - oracle-java8-installer
-    - docker-engine
-    - mesos
-
-- name: add docker group for non-sudo access
-  become: yes
-  group:
-    name: docker
-    state: present
-
-- name: add current user to the docker group
-  become: yes
-  user:
-    name: '{{ ansible_ssh_user }}'
-    groups: docker
-    append: yes
-  notify:
-    - restart docker
+  tags:
+    - common
+    - python
 
 - name: add message of the day!
   become: yes
   template:
     src: ../templates/motd.j2
     dest: /etc/motd
+  tags:
+    - common
+    - motd

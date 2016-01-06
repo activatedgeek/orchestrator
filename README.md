@@ -35,10 +35,11 @@ This project sets up the following cluster and frameworks:
 
 While starting the cluster, the following `env` variables are available to be configured:
 
-* `MESOS_MASTER_COUNT`: number of Mesos masters to boot (default: `1`)
-* `MESOS_SLAVE_COUNT`: number of Mesos slaves to boot (default: `2`)
-* `IP_CIDR_PREFIX`: IP addresses to assign to machines (default: `192.168.80.0/24`)
-* `ANSIBLE_PLAYBOOK`: ansible playbook to be used during provisioning (default: `mesos.yml`)
+* `MESOS_MASTER_COUNT`: number of Mesos masters (default: `1`)
+* `MESOS_SLAVE_COUNT`: number of Mesos slaves (default: `2`)
+* `IP_CIDR_PREFIX`: IP addresses prefixes for machines (default: `192.168.80.0/24`)
+* `ANSIBLE_PLAYBOOK`: ansible playbook for provisioning (default: `mesos.yml`)
+* `ANSIBLE_TAGS`: comma-separated ansible tags for provisioning (default: `all`)
 
 All the above variables are optional and have been set to reasonable defaults for a personal development cluster.
 
@@ -48,6 +49,7 @@ To setup any of the above variables, simply do a variable export as:
 > export MESOS_SLAVE_COUNT=6
 > export IP_CIDR_PREFIX=10.0.1.0/24
 > export ANSIBLE_PLAYBOOK=mesos.yml
+> export ANSIBLE_TAGS=all
 ```
 
 ### Bootstrap
