@@ -3,15 +3,6 @@
 #
 ---
 
-- name: install marathon and chronos
-  become: yes
-  apt:
-    name: '{{ item }}'
-    state: latest
-  with_items:
-    - marathon
-    - chronos
-
 - name: setup zookeeper master id
   become: yes
   template:
@@ -19,6 +10,8 @@
     dest: /etc/zookeeper/conf/myid
   notify:
     - restart zookeeper
+  tags:
+    - zk
 
 - name: setup zookeeper config
   become: yes
@@ -27,6 +20,8 @@
     dest: /etc/zookeeper/conf/zoo.cfg
   notify:
     - restart zookeeper
+  tags:
+    - zk
 
 - name: setup mesos zookeeper namespace
   become: yes
@@ -36,6 +31,8 @@
   notify:
     - restart mesos-master
     - restart zookeeper
+  tags:
+    - zk
 
 - name: setup mesos-master quorum
   become: yes
@@ -44,6 +41,8 @@
     dest: /etc/mesos-master/quorum
   notify:
     - restart mesos-master
+  tags:
+    - mesos-master
 
 - name: create marathon config dir
   become: yes
@@ -51,6 +50,8 @@
     path: /etc/marathon/conf
     state: directory
     recurse: yes
+  tags:
+    - marathon
 
 - name: setup mesos clustername
   become: yes
@@ -59,6 +60,8 @@
     dest: /etc/mesos-master/cluster
   notify:
     - restart mesos-master
+  tags:
+    - mesos-master
 
 - name: setup mesos-master, marathon hostname, ip
   become: yes
@@ -74,6 +77,10 @@
     - restart mesos-master
     - restart marathon
     - restart chronos
+  tags:
+    - mesos-master
+    - marathon
+    - chronos
 
 - name: update executor timeout for docker
   become: yes
@@ -82,25 +89,21 @@
     dest: /etc/marathon/conf/task_launch_timeout
   notify:
     - restart marathon
+  tags:
+    - marathon
 
-- name: stop mesos-slave
+- name: check for master services online
   become: yes
   service:
-    name: mesos-slave
-    state: stopped
-
-- name: manual override for init.d scripts
-  become: yes
-  copy:
-    content: manual
-    dest: /etc/init/mesos-slave.override
-  notify:
-    - restart mesos-master
-    - restart marathon
-
-- name: check for chronos online
-  become: yes
-  service:
-    name: chronos
+    name: '{{ item }}'
     state: started
-    enabled: yes
+  with_items:
+    - zookeeper
+    - mesos-master
+    - marathon
+    - chronos
+  tags:
+    - zk
+    - mesos-master
+    - marathon
+    - chronos
