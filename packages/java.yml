@@ -1,0 +1,19 @@
+##
+# install Java
+#
+---
+- name: add java 8 ppa
+  become: yes
+  apt_repository:
+    repo: ppa:webupd8team/java
+
+- name: update debconf for java
+  become: yes
+  shell: echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
+
+- name: install java8
+  become: yes
+  apt:
+    name: oracle-java8-installer
+    state: latest
+    update_cache: yes

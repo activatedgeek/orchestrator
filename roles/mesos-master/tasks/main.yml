@@ -3,15 +3,6 @@
 #
 ---
 
-- name: install marathon and chronos
-  become: yes
-  apt:
-    name: '{{ item }}'
-    state: latest
-  with_items:
-    - marathon
-    - chronos
-
 - name: setup zookeeper master id
   become: yes
   template:
@@ -83,24 +74,13 @@
   notify:
     - restart marathon
 
-- name: stop mesos-slave
+- name: check for master services online
   become: yes
   service:
-    name: mesos-slave
-    state: stopped
-
-- name: manual override for init.d scripts
-  become: yes
-  copy:
-    content: manual
-    dest: /etc/init/mesos-slave.override
-  notify:
-    - restart mesos-master
-    - restart marathon
-
-- name: check for chronos online
-  become: yes
-  service:
-    name: chronos
+    name: '{{ item }}'
     state: started
-    enabled: yes
+  with_items:
+    - mesos-master
+    - marathon
+    - chronos
+    - zookeeper

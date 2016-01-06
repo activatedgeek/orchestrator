@@ -3,7 +3,7 @@
 require 'ipaddr'
 
 def log (level, msg)
-  puts "[ #{level} ] #{msg}"
+  puts "[#{level}] #{msg}"
 end
 
 #
@@ -15,24 +15,16 @@ end
 # ANSIBLE_PLAYBOOK=
 #
 $MESOS_MASTER_COUNT = (ENV['MESOS_MASTER_COUNT'] || 1).to_i
-if ENV['MESOS_MASTER_COUNT'].to_s.strip.length == 0
-  log("info", "'MESOS_MASTER_COUNT' set to default value #{$MESOS_MASTER_COUNT}")
-end
+log("vars", "MESOS_MASTER_COUNT=#{$MESOS_MASTER_COUNT}")
 
 $MESOS_SLAVE_COUNT = (ENV['MESOS_SLAVE_COUNT'] || 2).to_i
-if ENV['MESOS_SLAVE_COUNT'].to_s.strip.length == 0
-  log("info", "'MESOS_SLAVE_COUNT' set to default value #{$MESOS_SLAVE_COUNT}")
-end
+log("vars", "MESOS_SLAVE_COUNT=#{$MESOS_SLAVE_COUNT}")
 
 $IP_CIDR_PREFIX = ENV['IP_CIDR_PREFIX'] || "192.168.80.0/24"
-if ENV['IP_CIDR_PREFIX'].to_s.strip.length == 0
-  log("info", "'IP_CIDR_PREFIX' set to default value '#{$IP_CIDR_PREFIX}'")
-end
+log("vars", "IP_CIDR_PREFIX='#{$IP_CIDR_PREFIX}'")
 
-$ANSIBLE_PLAYBOOK = ENV['ANSIBLE_PLAYBOOK'] || "mesos.yml"
-if ENV['ANSIBLE_PLAYBOOK'].to_s.strip.length == 0
-  log("info", "'ANSIBLE_PLAYBOOK' set to default value '#{$ANSIBLE_PLAYBOOK}'")
-end
+$ANSIBLE_PLAYBOOK = ENV['ANSIBLE_PLAYBOOK'] || "site.yml"
+log("vars", "ANSIBLE_PLAYBOOK='#{$ANSIBLE_PLAYBOOK}'")
 
 $IP = IPAddr.new($IP_CIDR_PREFIX)
 # skip first address
@@ -41,7 +33,8 @@ $IP = $IP.succ
 # groups for ansible
 ansibleGroups = {
   "mesos-master" => [],
-  "mesos-slave" => []
+  "mesos-slave" => [],
+  "mesos" => []
 }
 
 Vagrant.configure(2) do |config|
@@ -54,6 +47,7 @@ Vagrant.configure(2) do |config|
     config.vm.define "mesos-master-#{m_id}" do |master|
       master.vm.hostname = "mesos-master-#{m_id}"
       ansibleGroups["mesos-master"].insert(-1, master.vm.hostname)
+      ansibleGroups["mesos"].insert(-1, master.vm.hostname)
 
       $IP = $IP.succ
       master.vm.network "private_network", ip: $IP.to_s
@@ -70,6 +64,7 @@ Vagrant.configure(2) do |config|
     config.vm.define "mesos-slave-#{s_id}" do |slave|
       slave.vm.hostname = "mesos-slave-#{s_id}"
       ansibleGroups["mesos-slave"].insert(-1, slave.vm.hostname)
+      ansibleGroups["mesos"].insert(-1, slave.vm.hostname)
 
       $IP = $IP.succ
       slave.vm.network "private_network", ip: $IP.to_s

@@ -1,0 +1,59 @@
+##
+# install Mesos
+#
+---
+- name: add self signed key for mesosphere
+  become: yes
+  apt_key:
+    keyserver: hkp://keyserver.ubuntu.com:80
+    id: E56151BF
+    state: present
+
+- name: add apt repo for mesosphere
+  become: yes
+  apt_repository:
+    repo: deb http://repos.mesosphere.io/ubuntu trusty main
+    state: present
+
+##
+# @NOTE: mesos metapackage installs zookeeper as well
+#
+- name: install mesos, marathon, chronos
+  become: yes
+  apt:
+    name: '{{ item }}'
+    state: latest
+    update_cache: yes
+  with_items:
+    - mesos
+    - marathon
+    - chronos
+
+- name: manual override mesos services init.d scripts
+  become: yes
+  copy:
+    content: manual
+    dest: '{{ item }}'
+  with_items:
+    - /etc/init/mesos-master.override
+    - /etc/init/mesos-slave.override
+    - /etc/init/marathon.override
+    - /etc/init/chronos.override
+    - /etc/init/zookeeper.override
+
+##
+# Stop all mesos related services after installation
+# This enables other routines to explicitly control behavior
+# of this service
+#
+- name: stop all mesos, marathon, chronos services
+  become: yes
+  service:
+    name: '{{ item }}'
+    state: stopped
+  with_items:
+    - mesos-master
+    - mesos-slave
+    - marathon
+    - chronos
+    - zookeeper

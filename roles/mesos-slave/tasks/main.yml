@@ -2,15 +2,16 @@
 # Setup the slave nodes
 #
 ---
-- name: uninstall zookeeper
+- name: check start docker service
   become: yes
-  apt:
-    name: zookeeper
-    state: absent
+  service:
+    name: docker
+    state: started
 
-- name: install weave
-  become: yes
-  shell: curl -L git.io/weave -o /usr/local/bin/weave
+- name: download weave
+  get_url:
+    url: https://github.com/weaveworks/weave/releases/download/latest_release/weave
+    dest: /usr/local/bin/weave
 
 - name: update executable permissions for weave
   become: yes
@@ -19,15 +20,24 @@
     mode: 'a+x'
     state: touch
 
-- name: bootstrap weave router and proxy cluster
-  become: yes
+##
+# the first node is the bootstrap node
+#
+- name: bootstrap weave router and plugin
   shell: "weave launch --dns-domain={{ weave.dns_domain }} --init-peer-count={{ groups['mesos-slave'] | length }}; true"
   when: ansible_hostname == groups['mesos-slave'][0]
+  notify:
+    - restart mesos-slave
 
+##
+# all nodes other than the first one
+# will join the weave cluster
+#
 - name: join weave cluster
-  become: yes
   shell: "weave launch --dns-domain={{ weave.dns_domain }} --init-peer-count={{ groups['mesos-slave'] | length }} {{ hostvars[groups['mesos-slave'][0]]['ansible_' + network_interface].ipv4.address }}; true"
   when: ansible_hostname != groups['mesos-slave'][0]
+  notify:
+    - restart mesos-slave
 
 - name: setup mesos zookeeper namespace
   become: yes
@@ -72,16 +82,8 @@
   notify:
     - restart mesos-slave
 
-- name: stop mesos-master
+- name: check start mesos-slave service
   become: yes
   service:
-    name: mesos-master
-    state: stopped
-
-- name: manual override for init.d scripts
-  become: yes
-  copy:
-    content: manual
-    dest: /etc/init/mesos-master.override
-  notify:
-    - restart mesos-slave
+    name: mesos-slave
+    state: started

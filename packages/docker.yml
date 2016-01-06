@@ -1,0 +1,44 @@
+##
+# install Docker
+#
+---
+- name: add self signed key for docker
+  become: yes
+  apt_key:
+    keyserver: hkp://p80.pool.sks-keyservers.net:80
+    id: 58118E89F3A912897C070ADBF76221572C52609D
+    state: present
+
+- name: add apt repos for docker
+  become: yes
+  apt_repository:
+    repo: deb https://apt.dockerproject.org/repo ubuntu-trusty main
+    state: present
+
+- name: install docker
+  become: yes
+  apt:
+    name: docker-engine
+    state: latest
+    update_cache: yes
+
+- name: add docker group for non-sudo access
+  become: yes
+  group:
+    name: docker
+    state: present
+
+- name: add current user to the docker group
+  become: yes
+  user:
+    name: '{{ ansible_ssh_user }}'
+    groups: docker
+    append: yes
+  notify:
+    - restart docker
+
+- name: ensure docker service
+  become: yes
+  service:
+    name: docker
+    state: started
