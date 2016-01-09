@@ -4,6 +4,8 @@
 ---
 - hosts: all
   gather_facts: yes
+  vars:
+    network_interface: 'eth1'
   tasks:
     - include: packages/common.yml
 
