@@ -36,3 +36,12 @@
   tags:
     - common
     - motd
+
+- name: add updated hosts file
+  become: yes
+  template:
+    src: ../templates/hosts.j2
+    dest: /etc/hosts
+  tags:
+    - common
+    - hosts_file
