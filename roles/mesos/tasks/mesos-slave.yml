@@ -1,15 +1,4 @@
-##
-# Setup the slave nodes
-#
 ---
-- name: check start docker service
-  become: yes
-  service:
-    name: docker
-    state: started
-  tags:
-    - docker
-
 - name: download weave
   get_url:
     url: https://github.com/weaveworks/weave/releases/download/latest_release/weave
@@ -43,7 +32,7 @@
 # will join the weave cluster
 #
 - name: join weave cluster
-  shell: "weave launch --dns-domain={{ weave.dns_domain }} --init-peer-count={{ groups['mesos-slave'] | length }} {{ hostvars[groups['mesos-slave'][0]]['ansible_' + network_interface].ipv4.address }}; true"
+  shell: "weave launch --dns-domain={{ weave.dns_domain }} --init-peer-count={{ groups['mesos-slave'] | length }} {{ hostvars[groups['mesos-slave'][0]]['ansible_' + network.interface].ipv4.address }}; true"
   when: ansible_hostname != groups['mesos-slave'][0]
   notify:
     - restart mesos-slave
@@ -59,6 +48,7 @@
   notify:
     - restart mesos-slave
   tags:
+    - mesos
     - mesos-slave
 
 - name: setup mesos-slave hostname, ip
@@ -72,9 +62,10 @@
   notify:
     - restart mesos-slave
   tags:
+    - mesos
     - mesos-slave
 
-- name: setup mesos-slave hostname, ip
+- name: add containerizers
   become: yes
   copy:
     content: docker,mesos
@@ -82,6 +73,7 @@
   notify:
     - restart mesos-slave
   tags:
+    - mesos
     - mesos-slave
 
 - name: setup mesos-weave-docker socket connection
@@ -92,6 +84,7 @@
   notify:
     - restart mesos-slave
   tags:
+    - mesos
     - mesos-slave
 
 - name: update executor timeout for docker
@@ -102,6 +95,7 @@
   notify:
     - restart mesos-slave
   tags:
+    - mesos
     - mesos-slave
 
 - name: check start mesos-slave service
@@ -110,4 +104,5 @@
     name: mesos-slave
     state: started
   tags:
+    - mesos
     - mesos-slave

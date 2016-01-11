@@ -1,7 +1,16 @@
-##
-# Setup mesos master related packages
-#
 ---
+- name: install marathon and chronos on master nodes
+  become: yes
+  apt:
+    name: '{{ item }}'
+    state: latest
+    update_cache: yes
+  with_items:
+    - marathon
+    - chronos
+  tags:
+    - marathon
+    - chronos
 
 - name: setup zookeeper master id
   become: yes
@@ -33,6 +42,8 @@
     - restart zookeeper
   tags:
     - zk
+    - mesos
+    - mesos-master
 
 - name: setup mesos-master quorum
   become: yes
@@ -42,6 +53,32 @@
   notify:
     - restart mesos-master
   tags:
+    - mesos
+    - mesos-master
+
+- name: setup mesos clustername
+  become: yes
+  copy:
+    content: '{{ mesos.clustername }}'
+    dest: /etc/mesos-master/cluster
+  notify:
+    - restart mesos-master
+  tags:
+    - mesos
+    - mesos-master
+
+- name: setup mesos-master hostname, ip
+  become: yes
+  template:
+    src: mesos-master.hostname.j2
+    dest: '{{ item }}'
+  with_items:
+    - /etc/mesos-master/hostname
+    - /etc/mesos-master/ip
+  notify:
+    - restart mesos-master
+  tags:
+    - mesos
     - mesos-master
 
 - name: create marathon config dir
@@ -53,32 +90,18 @@
   tags:
     - marathon
 
-- name: setup mesos clustername
-  become: yes
-  copy:
-    content: '{{ mesos.cluster_name }}'
-    dest: /etc/mesos-master/cluster
-  notify:
-    - restart mesos-master
-  tags:
-    - mesos-master
-
-- name: setup mesos-master, marathon hostname, ip
+- name: setup marathon, chronos hostname, ip
   become: yes
   template:
     src: mesos-master.hostname.j2
     dest: '{{ item }}'
   with_items:
-    - /etc/mesos-master/hostname
-    - /etc/mesos-master/ip
     - /etc/marathon/conf/hostname
     - /etc/chronos/conf/hostname
   notify:
-    - restart mesos-master
     - restart marathon
     - restart chronos
   tags:
-    - mesos-master
     - marathon
     - chronos
 
@@ -92,18 +115,29 @@
   tags:
     - marathon
 
-- name: check for master services online
+- name: check for mesos-master online
   become: yes
   service:
     name: '{{ item }}'
     state: started
+    enabled: yes
   with_items:
     - zookeeper
     - mesos-master
+  tags:
+    - zk
+    - mesos
+    - mesos-master
+
+- name: check for marathon, chronos online
+  become: yes
+  service:
+    name: '{{ item }}'
+    state: started
+    enabled: yes
+  with_items:
     - marathon
     - chronos
   tags:
-    - zk
-    - mesos-master
     - marathon
     - chronos

@@ -1,6 +1,6 @@
 zk://
 {%- for host in groups['mesos-master'] -%}
-	{{ hostvars[host]['ansible_' + network_interface].ipv4.address }}:2181
+	{{ hostvars[host]['ansible_' + network.interface].ipv4.address }}:2181
 	{%- if not loop.last -%}
 		,
 	{%- endif -%}

@@ -1,6 +1,0 @@
-# network interface of machines
-network_interface: 'eth1'
-
-mesos:
-  # default cluster name
-  cluster_name: mycluster

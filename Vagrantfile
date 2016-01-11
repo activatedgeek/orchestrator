@@ -76,8 +76,6 @@ Vagrant.configure(2) do |config|
       #
       if s_id === $MESOS_SLAVE_COUNT
         slave.vm.provision :ansible do |ansible|
-          # ansible.verbose = 'v'
-          # ansible.inventory_file = ''
           ansible.playbook = "site.yml"
           ansible.groups = ansibleGroups
           ansible.limit = "all"

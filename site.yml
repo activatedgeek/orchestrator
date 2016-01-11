@@ -6,3 +6,13 @@
   gather_facts: yes
   roles:
     - common
+
+- hosts: mesos-master
+  gather_facts: yes
+  roles:
+    - { role: 'mesos', mode: 'master' }
+
+- hosts: mesos-slave
+  gather_facts: yes
+  roles:
+    - { role: 'mesos', mode: 'slave' }

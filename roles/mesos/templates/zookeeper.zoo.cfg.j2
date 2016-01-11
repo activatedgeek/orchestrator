@@ -6,5 +6,5 @@ initLimit=5
 syncLimit=2
 
 {% for host in groups['mesos-master'] %}
-server.{{ loop.index }}={{ hostvars[host]['ansible_' + network_interface].ipv4.address }}:2888:3888
+server.{{ loop.index }}={{ hostvars[host]['ansible_' + network.interface].ipv4.address }}:2888:3888
 {% endfor %}
