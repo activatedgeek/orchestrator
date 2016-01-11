@@ -1,0 +1,6 @@
+---
+# vars file for roles/flocker
+flocker:
+  cluster:
+    cert: '{{ flocker_cluster_cert }}'
+    key: '{{ flocker_cluster_key }}'
