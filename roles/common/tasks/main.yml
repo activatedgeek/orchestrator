@@ -1,13 +1,10 @@
-#
-# install common packages for general usage
-#
 ---
+# tasks file for roles/common
 - name: install basic common packages
   become: yes
   apt:
     name: '{{ item }}'
     state: latest
-    update_cache: yes
   with_items:
     - g++
     - git
@@ -19,19 +16,10 @@
   tags:
     - common
 
-- name: install python-dev
-  become: yes
-  apt:
-    name: python-dev
-    state: latest
-  tags:
-    - common
-    - python
-
 - name: add message of the day!
   become: yes
-  template:
-    src: ../templates/motd.j2
+  file:
+    src: motd
     dest: /etc/motd
   tags:
     - common
@@ -40,7 +28,7 @@
 - name: add updated hosts file
   become: yes
   template:
-    src: ../templates/hosts.j2
+    src: hosts.j2
     dest: /etc/hosts
   tags:
     - common

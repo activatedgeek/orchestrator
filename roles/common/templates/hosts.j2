@@ -2,7 +2,7 @@
 
 # add all hosts from ansible
 {% for host in groups.all %}
-{{ hostvars[host]['ansible_' + network_interface].ipv4.address }} {{ host }}
+{{ hostvars[host]['ansible_' + network.interface].ipv4.address }} {{ host }}
 {% endfor %}
 
 # The following lines are desirable for IPv6 capable hosts

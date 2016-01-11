@@ -12,8 +12,6 @@ end
 # MESOS_MASTER_COUNT=
 # MESOS_SLAVE_COUNT=
 # IP_CIDR_PREFIX=
-# ANSIBLE_PLAYBOOK=
-# ANSIBLE_TAGS=taga,tagb,tagc
 #
 $MESOS_MASTER_COUNT = (ENV['MESOS_MASTER_COUNT'] || 1).to_i
 log("vars", "MESOS_MASTER_COUNT=#{$MESOS_MASTER_COUNT}")
@@ -24,12 +22,6 @@ log("vars", "MESOS_SLAVE_COUNT=#{$MESOS_SLAVE_COUNT}")
 $IP_CIDR_PREFIX = ENV['IP_CIDR_PREFIX'] || "192.168.80.0/24"
 log("vars", "IP_CIDR_PREFIX='#{$IP_CIDR_PREFIX}'")
 
-$ANSIBLE_PLAYBOOK = ENV['ANSIBLE_PLAYBOOK'] || "site.yml"
-log("vars", "ANSIBLE_PLAYBOOK='#{$ANSIBLE_PLAYBOOK}'")
-
-$ANSIBLE_TAGS = ENV['ANSIBLE_TAGS'] || "all"
-log("vars", "ANSIBLE_TAGS='#{$ANSIBLE_TAGS}'")
-
 $IP = IPAddr.new($IP_CIDR_PREFIX)
 # skip first address
 $IP = $IP.succ
@@ -37,8 +29,7 @@ $IP = $IP.succ
 # groups for ansible
 ansibleGroups = {
   "mesos-master" => [],
-  "mesos-slave" => [],
-  "mesos" => []
+  "mesos-slave" => []
 }
 
 Vagrant.configure(2) do |config|
@@ -51,7 +42,6 @@ Vagrant.configure(2) do |config|
     config.vm.define "mesos-master-#{m_id}" do |master|
       master.vm.hostname = "mesos-master-#{m_id}"
       ansibleGroups["mesos-master"].insert(-1, master.vm.hostname)
-      ansibleGroups["mesos"].insert(-1, master.vm.hostname)
 
       $IP = $IP.succ
       master.vm.network "private_network", ip: $IP.to_s
@@ -68,7 +58,6 @@ Vagrant.configure(2) do |config|
     config.vm.define "mesos-slave-#{s_id}" do |slave|
       slave.vm.hostname = "mesos-slave-#{s_id}"
       ansibleGroups["mesos-slave"].insert(-1, slave.vm.hostname)
-      ansibleGroups["mesos"].insert(-1, slave.vm.hostname)
 
       $IP = $IP.succ
       slave.vm.network "private_network", ip: $IP.to_s
@@ -89,10 +78,13 @@ Vagrant.configure(2) do |config|
         slave.vm.provision :ansible do |ansible|
           # ansible.verbose = 'v'
           # ansible.inventory_file = ''
-          ansible.playbook = $ANSIBLE_PLAYBOOK
+          ansible.playbook = "site.yml"
           ansible.groups = ansibleGroups
-          ansible.limit = 'all'
-          ansible.tags = $ANSIBLE_TAGS
+          ansible.limit = "all"
+          ansible.tags = "all"
+          ansible.raw_arguments = [
+            "-e", "@vagrant.config.yml"
+          ]
         end
       end
     end

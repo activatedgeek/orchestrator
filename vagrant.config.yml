@@ -1,0 +1,7 @@
+# Configuration file for Vagrant Cluster
+---
+##
+# network interface to use for
+# communication across nodes
+#
+network_interface: 'eth1'

@@ -1,2 +1,5 @@
 .vagrant
 pybin/
+
+*.config.yml
+!vagrant.config.yml
