@@ -1,7 +1,5 @@
-##
-# install Docker
-#
 ---
+# tasks file for roles/docker
 - name: add self signed key for docker
   become: yes
   apt_key:
@@ -19,13 +17,6 @@
   tags:
     - docker
 
-- name: add apt repos for flocker
-  become: yes
-  apt_repository:
-    repo: 'deb https://clusterhq-archive.s3.amazonaws.com/ubuntu/14.04/\$(ARCH) /'
-    state: present
-  tags:
-    - flocker
 
 - name: install docker
   become: yes
@@ -62,15 +53,3 @@
     state: started
   tags:
     - docker
-
-- name: install flocker service and plugin
-  become: yes
-  apt:
-    name: '{{ item }}'
-    state: latest
-    update_cache: yes
-  with_items:
-    - clusterhq-flocker-node
-    - clusterhq-flocker-docker-plugin
-  tags:
-    - flocker
