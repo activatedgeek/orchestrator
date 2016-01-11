@@ -4,16 +4,15 @@
 ---
 - hosts: all
   gather_facts: yes
-  tasks:
-    - include: packages/common.yml
+  roles:
+    - common
 
-- hosts: mesos
-  tasks:
-    - include: packages/docker.yml
-    - include: packages/java.yml
-    - include: packages/mesosphere.yml
-  handlers:
-    - include: handlers/docker.yml
+- hosts: mesos-master
+  gather_facts: yes
+  roles:
+    - { role: 'mesos', mode: 'master' }
 
-- include: mesos-master.yml
-- include: mesos-slave.yml
+- hosts: mesos-slave
+  gather_facts: yes
+  roles:
+    - { role: 'mesos', mode: 'slave' }
