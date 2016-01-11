@@ -1,0 +1,6 @@
+---
+##
+# this file lists all variables accepted
+# from external interface
+#
+network_interface: eth0

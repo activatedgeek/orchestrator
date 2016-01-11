@@ -1,6 +1,0 @@
-##
-# handlers for services
-#
----
-- include: zookeeper.yml
-- include: mesos.yml

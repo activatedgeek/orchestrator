@@ -1,5 +1,0 @@
-##
-# handlers for services
-#
----
-- include: mesos.yml

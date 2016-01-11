@@ -1,0 +1,10 @@
+---
+# vars file for roles/mesos
+network:
+  interface: '{{ network_interface }}'
+
+mesos:
+  clustername: '{{ mesos_clustername }}'
+
+weave:
+  dns_domain: '{{ weave_dns_domain }}'

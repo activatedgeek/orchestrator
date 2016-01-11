@@ -1,0 +1,17 @@
+# Configuration file for Vagrant Cluster
+---
+##
+# network interface to use for
+# communication across nodes
+#
+network_interface: eth1
+
+##
+# name of the mesos cluster
+#
+mesos_clustername: vagrant-cluster
+
+##
+# DNS name for the weave cluster
+#
+weave_dns_domain: vagrant.local.
