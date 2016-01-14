@@ -6,7 +6,6 @@
     dest: /opt/consul/conf.d/consul-client.conf
   notify:
     - restart consul-client
-    - join consul cluster
 
 - name: start consul-client
   become: yes
@@ -14,5 +13,3 @@
     name: consul-client
     state: started
     enabled: yes
-  notify:
-    - join consul cluster

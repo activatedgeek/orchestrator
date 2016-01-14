@@ -1,45 +1,4 @@
 ---
-- name: download weave
-  get_url:
-    url: https://github.com/weaveworks/weave/releases/download/latest_release/weave
-    dest: /usr/local/bin/weave
-  tags:
-    - weave
-
-- name: update executable permissions for weave
-  become: yes
-  file:
-    path: /usr/local/bin/weave
-    mode: 'a+x'
-    state: touch
-  tags:
-    - weave
-
-##
-# the first node is the bootstrap node
-#
-- name: bootstrap weave router and plugin
-  shell: "weave launch --dns-domain={{ weave.dns_domain }} --init-peer-count={{ groups['mesos-slave'] | length }}; true"
-  when: ansible_hostname == groups['mesos-slave'][0]
-  notify:
-    - restart mesos-slave
-  tags:
-    - weave
-    - weaveboot
-
-##
-# all nodes other than the first one
-# will join the weave cluster
-#
-- name: join weave cluster
-  shell: "weave launch --dns-domain={{ weave.dns_domain }} --init-peer-count={{ groups['mesos-slave'] | length }} {{ hostvars[groups['mesos-slave'][0]]['ansible_' + network.interface].ipv4.address }}; true"
-  when: ansible_hostname != groups['mesos-slave'][0]
-  notify:
-    - restart mesos-slave
-  tags:
-    - weave
-    - weavejoin
-
 - name: setup mesos zookeeper namespace
   become: yes
   template:
@@ -70,17 +29,6 @@
   copy:
     content: docker,mesos
     dest: /etc/mesos-slave/containerizers
-  notify:
-    - restart mesos-slave
-  tags:
-    - mesos
-    - mesos-slave
-
-- name: setup mesos-weave-docker socket connection
-  become: yes
-  copy:
-    content: /var/run/weave/weave.sock
-    dest: /etc/mesos-slave/docker_socket
   notify:
     - restart mesos-slave
   tags:

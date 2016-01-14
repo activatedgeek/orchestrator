@@ -17,6 +17,8 @@
     mode: 'u+x'
     copy: no
     creates: /usr/local/bin/consul
+  tags:
+    - consul
 
 - name: install init.d service
   become: yes
@@ -25,14 +27,22 @@
     dest: '/etc/init.d/consul-{{ mode }}'
     mode: 'u+x'
   when: mode is defined
+  tags:
+    - consul
 
 - name: update-rc for consul
   become: yes
   shell: 'update-rc.d consul-{{ mode }} defaults'
   when: mode is defined
+  tags:
+    - consul
 
 - include: consul-server.yml
   when: mode is defined and mode == 'server'
+  tags:
+    - consul
 
 - include: consul-client.yml
   when: mode is defined and mode == 'client'
+  tags:
+    - consul

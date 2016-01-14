@@ -9,5 +9,6 @@
   "bind_addr": "{{ hostvars[ansible_hostname]['ansible_' + network.interface].ipv4.address }}",
   "client_addr": "{{ consul.client_addr }}",
   "ui": true,
-  "bootstrap_expect": {{ consul_server_count }}
+  "bootstrap_expect": {{ consul_server_count }},
+  "start_join": ["{{ hostvars[groups['consul-server'][0]]['ansible_' + network.interface].ipv4.address }}"]
 }
