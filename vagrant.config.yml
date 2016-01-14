@@ -15,3 +15,8 @@ mesos_clustername: vagrant-cluster
 # DNS name for the weave cluster
 #
 weave_dns_domain: vagrant.local.
+
+##
+# Consul datacenter name
+#
+consul_datacenter: vagrant-cluster

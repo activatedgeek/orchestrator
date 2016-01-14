@@ -1,0 +1,18 @@
+---
+# handlers file for roles/consul
+- name: restart consul-server
+  become: yes
+  service:
+    name: consul-server
+    state: restarted
+    enabled: yes
+
+- name: restart consul-client
+  become: yes
+  service:
+    name: consul-client
+    state: restarted
+    enabled: yes
+
+- name: join consul cluster
+  shell: consul join {{ hostvars[groups['consul-server'][0]]['ansible_' + network.interface].ipv4.address }}

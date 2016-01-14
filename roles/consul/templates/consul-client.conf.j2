@@ -1,0 +1,7 @@
+{
+  "node_name": "{{ ansible_hostname }}",
+  "datacenter": "{{ consul.dc }}",
+  "data_dir": "{{ consul.data_dir }}",
+  "log_level": "{{ consul.loglevel }}",
+  "bind_addr": "{{ hostvars[ansible_hostname]['ansible_' + network.interface].ipv4.address }}"
+}

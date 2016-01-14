@@ -10,8 +10,10 @@
     - git
     - curl
     - wget
+    - unzip
     - vim
     - ntp
+    - dnsmasq
     - python-pip
   tags:
     - common
@@ -24,12 +26,3 @@
   tags:
     - common
     - motd
-
-- name: add updated hosts file
-  become: yes
-  template:
-    src: hosts.j2
-    dest: /etc/hosts
-  tags:
-    - common
-    - hosts_file
