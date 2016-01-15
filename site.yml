@@ -2,17 +2,56 @@
 # Deploy the cluster
 #
 ---
+##
+# always gather facts for all hosts
+# needed until fact-caching is enabled
+#
 - hosts: all
   gather_facts: yes
+  tags:
+    - always
+
+##
+# install common packages
+#
+- hosts: all
+  gather_facts: no
   roles:
     - common
 
+##
+# setup consul server before the mesos cluster
+#
+- hosts: consul-server
+  gather_facts: no
+  roles:
+    - { role: 'consul', mode: 'server' }
+
+##
+# setup mesos-master quorum
+#
 - hosts: mesos-master
-  gather_facts: yes
+  gather_facts: no
   roles:
     - { role: 'mesos', mode: 'master' }
 
+##
+# setup mesos-slave, each slave has a consul
+# agent running, for DNS queries and service discovery
+#
 - hosts: mesos-slave
-  gather_facts: yes
+  gather_facts: no
   roles:
+    - { role: 'consul', mode: 'client' }
     - { role: 'mesos', mode: 'slave' }
+
+##
+# add flocker for persistent containers
+#
+- hosts: flocker-control
+  roles:
+    - { role: 'flocker', mode: 'control' }
+
+- hosts: flocker-agent
+  roles:
+    - { role: 'flocker', mode: 'agent' }

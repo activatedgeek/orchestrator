@@ -29,7 +29,11 @@ $IP = $IP.succ
 # groups for ansible
 ansibleGroups = {
   "mesos-master" => [],
-  "mesos-slave" => []
+  "mesos-slave" => [],
+  "flocker-control" => [],
+  "flocker-agent" => [],
+  "consul-server" => [],
+  "consul-client" => []
 }
 
 Vagrant.configure(2) do |config|
@@ -42,6 +46,10 @@ Vagrant.configure(2) do |config|
     config.vm.define "mesos-master-#{m_id}" do |master|
       master.vm.hostname = "mesos-master-#{m_id}"
       ansibleGroups["mesos-master"].insert(-1, master.vm.hostname)
+      ansibleGroups["consul-server"].insert(-1, master.vm.hostname)
+      if m_id === 1
+        ansibleGroups["flocker-control"].insert(-1, master.vm.hostname)
+      end
 
       $IP = $IP.succ
       master.vm.network "private_network", ip: $IP.to_s
@@ -58,6 +66,8 @@ Vagrant.configure(2) do |config|
     config.vm.define "mesos-slave-#{s_id}" do |slave|
       slave.vm.hostname = "mesos-slave-#{s_id}"
       ansibleGroups["mesos-slave"].insert(-1, slave.vm.hostname)
+      ansibleGroups["flocker-agent"].insert(-1, slave.vm.hostname)
+      ansibleGroups["consul-client"].insert(-1, slave.vm.hostname)
 
       $IP = $IP.succ
       slave.vm.network "private_network", ip: $IP.to_s
