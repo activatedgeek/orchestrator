@@ -9,6 +9,12 @@
   tags:
     - consul
 
+- name: install dnsmasq
+  become: yes
+  apt:
+    name: dnsmasq
+    state: latest
+
 - name: install consul 0.6.2
   become: yes
   unarchive:
@@ -58,3 +64,18 @@
   when: mode is defined and mode == 'client'
   tags:
     - consul
+
+- name: enable DNS proxy for consul
+  become: yes
+  copy:
+    content: server=/consul/127.0.0.1#8600
+    dest: /etc/dnsmasq.d/10-consul
+  notify:
+    - restart dnsmasq
+
+- name: check dnsmasq online
+  become: yes
+  service:
+    name: dnsmasq
+    state: started
+    enabled: yes
