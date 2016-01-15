@@ -1,4 +1,6 @@
-# Configuration file for Vagrant Cluster
+##
+# Ansible Configuration file for vagrant cluster
+#
 ---
 ##
 # network interface to use for
@@ -12,6 +14,6 @@ network_interface: eth1
 mesos_clustername: vagrant-cluster
 
 ##
-# DNS name for the weave cluster
+# Consul datacenter name
 #
-weave_dns_domain: vagrant.local.
+consul_datacenter: vagrant-cluster

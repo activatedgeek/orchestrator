@@ -1,0 +1,10 @@
+---
+# vars file for roles/consul
+consul:
+  dc: '{{ consul_datacenter }}'
+  data_dir: /opt/consul
+  loglevel: INFO
+  client_addr: 0.0.0.0
+
+network:
+  interface: '{{ network_interface }}'

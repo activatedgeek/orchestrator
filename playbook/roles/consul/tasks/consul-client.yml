@@ -1,0 +1,15 @@
+---
+- name: setup consul client configuration
+  become: yes
+  template:
+    src: consul-client.conf.j2
+    dest: /opt/consul/conf.d/consul-client.conf
+  notify:
+    - restart consul-client
+
+- name: start consul-client
+  become: yes
+  service:
+    name: consul-client
+    state: started
+    enabled: yes

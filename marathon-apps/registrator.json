@@ -1,0 +1,22 @@
+{
+	"id": "registrator",
+	"cpus": 0.5,
+	"mem": 64.0,
+	"instances": 2,
+	"container": {
+		"type": "DOCKER",
+		"docker": {
+			"image": "gliderlabs/registrator:latest",
+			"network": "HOST"
+		},
+		"volumes": [
+			{
+				"containerPath": "/tmp/docker.sock",
+				"hostPath": "/var/run/docker.sock",
+				"mode": "RO"
+			}
+		]
+	},
+	"args": ["consul://127.0.0.1:8500"],
+	"constraints": [["hostname", "UNIQUE"]]
+}

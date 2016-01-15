@@ -1,0 +1,4 @@
+---
+# defaults file for roles/flocker
+flocker_cluster_cert: cluster.crt
+flocker_cluster_key: cluster.key

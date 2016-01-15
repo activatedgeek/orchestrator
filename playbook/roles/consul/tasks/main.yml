@@ -1,0 +1,81 @@
+---
+# tasks file for roles/consul
+- name: create a conf directory for consul
+  become: yes
+  file:
+    path: /opt/consul/conf.d
+    state: directory
+    recurse: yes
+  tags:
+    - consul
+
+- name: install dnsmasq
+  become: yes
+  apt:
+    name: dnsmasq
+    state: latest
+
+- name: install consul 0.6.2
+  become: yes
+  unarchive:
+    src: https://releases.hashicorp.com/consul/0.6.2/consul_0.6.2_linux_amd64.zip
+    dest: /usr/local/bin
+    mode: 'u+x'
+    copy: no
+    creates: /usr/local/bin/consul
+  tags:
+    - consul
+
+- name: install consul template 0.12.1
+  become: yes
+  unarchive:
+    src: https://releases.hashicorp.com/consul-template/0.12.1/consul-template_0.12.1_linux_amd64.zip
+    dest: /usr/local/bin
+    mode: 'u+x'
+    copy: no
+    creates: /usr/local/bin/consul-template
+  tags:
+    - consul
+    - consul-template
+
+- name: install init.d service
+  become: yes
+  template:
+    src: consul.init.d.j2
+    dest: '/etc/init.d/consul-{{ mode }}'
+    mode: 'u+x'
+  when: mode is defined
+  tags:
+    - consul
+
+- name: update-rc for consul
+  become: yes
+  shell: 'update-rc.d consul-{{ mode }} defaults'
+  when: mode is defined
+  tags:
+    - consul
+
+- include: consul-server.yml
+  when: mode is defined and mode == 'server'
+  tags:
+    - consul
+
+- include: consul-client.yml
+  when: mode is defined and mode == 'client'
+  tags:
+    - consul
+
+- name: enable DNS proxy for consul
+  become: yes
+  copy:
+    content: server=/consul/127.0.0.1#8600
+    dest: /etc/dnsmasq.d/10-consul
+  notify:
+    - restart dnsmasq
+
+- name: check dnsmasq online
+  become: yes
+  service:
+    name: dnsmasq
+    state: started
+    enabled: yes
