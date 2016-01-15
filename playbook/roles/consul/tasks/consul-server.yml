@@ -2,8 +2,16 @@
 - name: setup consul server configuration
   become: yes
   template:
-    src: consul-server.conf.j2
-    dest: /opt/consul/conf.d/consul-server.conf
+    src: consul-server.json.j2
+    dest: /opt/consul/conf.d/00consul-server.json
+  notify:
+    - restart consul-server
+
+- name: add consul-ui service to checks
+  become: yes
+  template:
+    src: consul-ui.json.j2
+    dest: /opt/consul/conf.d/consul-ui.json
   notify:
     - restart consul-server
 

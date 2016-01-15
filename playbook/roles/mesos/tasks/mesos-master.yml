@@ -141,3 +141,13 @@
   tags:
     - marathon
     - chronos
+
+- name: add mesos master services to consul
+  become: yes
+  template:
+    src: consul/mesos-master.json.j2
+    dest: /opt/consul/conf.d/mesos-master.json
+  notify:
+    - restart consul-server
+  tags:
+    - consul
