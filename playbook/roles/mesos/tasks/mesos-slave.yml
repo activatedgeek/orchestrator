@@ -54,3 +54,13 @@
   tags:
     - mesos
     - mesos-slave
+
+- name: add mesos slave service to consul
+  become: yes
+  template:
+    src: consul/mesos-slave.json.j2
+    dest: /opt/consul/conf.d/mesos-slave.json
+  notify:
+    - restart consul-client
+  tags:
+    - consul

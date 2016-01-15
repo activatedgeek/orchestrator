@@ -1,0 +1,14 @@
+---
+- name: restart consul-server
+  become: yes
+  service:
+    name: consul-server
+    state: restarted
+    enabled: yes
+
+- name: restart consul-client
+  become: yes
+  service:
+    name: consul-client
+    state: restarted
+    enabled: yes

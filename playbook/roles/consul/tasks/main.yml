@@ -48,13 +48,6 @@
   tags:
     - consul
 
-- name: update-rc for consul
-  become: yes
-  shell: 'update-rc.d consul-{{ mode }} defaults'
-  when: mode is defined
-  tags:
-    - consul
-
 - include: consul-server.yml
   when: mode is defined and mode == 'server'
   tags:

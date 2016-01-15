@@ -17,12 +17,27 @@
     - common
 
 ##
+# setup consul server cluster
+#
+- hosts: consul-server
+  gather_facts: no
+  roles:
+    - { role: 'consul', mode: 'server' }
+
+##
+# setup consul clients
+#
+- hosts: consul-client
+  gather_facts: no
+  roles:
+    - { role: 'consul', mode: 'client' }
+
+##
 # setup mesos-master quorum
 #
 - hosts: mesos-master
   gather_facts: no
   roles:
-    - { role: 'consul', mode: 'server' }
     - { role: 'mesos', mode: 'master' }
 
 ##
@@ -32,7 +47,6 @@
 - hosts: mesos-slave
   gather_facts: no
   roles:
-    - { role: 'consul', mode: 'client' }
     - { role: 'mesos', mode: 'slave' }
 
 ##
