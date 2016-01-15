@@ -1,0 +1,4 @@
+---
+# vars file for roles/mesos
+network:
+  interface: '{{ network_interface }}'

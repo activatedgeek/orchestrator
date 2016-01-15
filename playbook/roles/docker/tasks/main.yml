@@ -17,7 +17,6 @@
   tags:
     - docker
 
-
 - name: install docker
   become: yes
   apt:
@@ -41,6 +40,16 @@
     name: '{{ ansible_ssh_user }}'
     groups: docker
     append: yes
+  notify:
+    - restart docker
+  tags:
+    - docker
+
+- name: add default DNS options for containers
+  become: yes
+  template:
+    src: defaults.j2
+    dest: /etc/default/docker
   notify:
     - restart docker
   tags:
