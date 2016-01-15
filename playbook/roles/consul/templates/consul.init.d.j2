@@ -8,7 +8,7 @@
 # Description:       Consul Agent Runner Service
 ### END INIT INFO
 
-SCRIPT="consul agent -config-file={{ consul.data_dir }}/conf.d/consul-{{ mode }}.conf"
+SCRIPT="consul agent -config-dir={{ consul.data_dir }}/conf.d"
 RUNAS=root
 NAME=consul
 
