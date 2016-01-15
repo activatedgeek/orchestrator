@@ -13,7 +13,6 @@
     - unzip
     - vim
     - ntp
-    - dnsmasq
     - python-pip
   tags:
     - common

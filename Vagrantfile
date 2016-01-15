@@ -86,12 +86,12 @@ Vagrant.configure(2) do |config|
       #
       if s_id === $MESOS_SLAVE_COUNT
         slave.vm.provision :ansible do |ansible|
-          ansible.playbook = "site.yml"
+          ansible.playbook = "playbook/site.yml"
           ansible.groups = ansibleGroups
           ansible.limit = "all"
           ansible.tags = "all"
           ansible.raw_arguments = [
-            "-e", "@vagrant.config.yml"
+            "-e", "@config/vagrant.config.yml"
           ]
         end
       end

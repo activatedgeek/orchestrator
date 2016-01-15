@@ -47,6 +47,7 @@
 
 ##
 # add flocker for persistent containers
+# @NOTE work in progress
 #
 - hosts: flocker-control
   roles:
