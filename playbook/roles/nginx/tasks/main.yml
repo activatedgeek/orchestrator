@@ -23,6 +23,18 @@
     state: absent
   notify:
     - reload nginx
+  tags:
+    - nginx
+
+- name: setup nginx configuration
+  become: yes
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+  notify:
+    - restart nginx
+  tags:
+    - nginx
 
 - name: ensure nginx service
   become: yes

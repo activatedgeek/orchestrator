@@ -4,12 +4,12 @@
   become: yes
   service:
     name: nginx
-    state: reload
+    state: reloaded
     enabled: yes
 
 - name: restart nginx
   become: yes
   service:
     name: nginx
-    state: restart
+    state: restarted
     enabled: yes
