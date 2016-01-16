@@ -1,0 +1,31 @@
+---
+- name: install consul template 0.12.1
+  become: yes
+  unarchive:
+    src: https://releases.hashicorp.com/consul-template/0.12.1/consul-template_0.12.1_linux_amd64.zip
+    dest: /usr/local/bin
+    mode: 'u+x'
+    copy: no
+    creates: /usr/local/bin/consul-template
+
+- name: install consul-template init.d service
+  become: yes
+  template:
+    src: consul-template.init.d.j2
+    dest: '/etc/init.d/consul-template'
+    mode: 'u+x'
+
+- name: setup consul-template configuration file
+  become: yes
+  template:
+    src: consul-template.hcl.j2
+    dest: '{{ consul.template_conf_dir }}/00consul-template.hcl'
+  notify:
+    - restart consul-template
+
+- name: start consul-template service
+  become: yes
+  service:
+    name: consul-template
+    state: started
+    enabled: yes

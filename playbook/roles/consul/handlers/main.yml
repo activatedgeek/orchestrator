@@ -1,0 +1,29 @@
+---
+# handlers file for roles/consul
+- name: restart consul-server
+  become: yes
+  service:
+    name: consul-server
+    state: restarted
+    enabled: yes
+
+- name: restart consul-template
+  become: yes
+  service:
+    name: consul-template
+    state: restarted
+    enabled: yes
+
+- name: restart consul-client
+  become: yes
+  service:
+    name: consul-client
+    state: restarted
+    enabled: yes
+
+- name: restart dnsmasq proxy
+  become: yes
+  service:
+    name: dnsmasq
+    state: restarted
+    enabled: yes

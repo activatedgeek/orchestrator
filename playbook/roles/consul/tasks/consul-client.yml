@@ -1,0 +1,15 @@
+---
+- name: setup consul client configuration
+  become: yes
+  template:
+    src: consul-client.json.j2
+    dest: '{{ consul.conf_dir }}/00consul-client.json'
+  notify:
+    - restart consul-client
+
+- name: start consul-client
+  become: yes
+  service:
+    name: consul-client
+    state: started
+    enabled: yes

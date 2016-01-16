@@ -1,0 +1,17 @@
+---
+# tasks file for roles/java
+- name: add ZFS ppa
+  become: yes
+  apt_repository:
+    repo: ppa:zfs-native/stable
+  tags:
+    - zfs
+
+- name: install ZFS
+  become: yes
+  apt:
+    name: ubuntu-zfs
+    state: latest
+    update_cache: yes
+  tags:
+    - zfs

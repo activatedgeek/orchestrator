@@ -29,7 +29,11 @@ $IP = $IP.succ
 # groups for ansible
 ansibleGroups = {
   "mesos-master" => [],
-  "mesos-slave" => []
+  "mesos-slave" => [],
+  "flocker-control" => [],
+  "flocker-agent" => [],
+  "consul-server" => [],
+  "consul-client" => []
 }
 
 Vagrant.configure(2) do |config|
@@ -42,6 +46,10 @@ Vagrant.configure(2) do |config|
     config.vm.define "mesos-master-#{m_id}" do |master|
       master.vm.hostname = "mesos-master-#{m_id}"
       ansibleGroups["mesos-master"].insert(-1, master.vm.hostname)
+      ansibleGroups["consul-server"].insert(-1, master.vm.hostname)
+      if m_id === 1
+        ansibleGroups["flocker-control"].insert(-1, master.vm.hostname)
+      end
 
       $IP = $IP.succ
       master.vm.network "private_network", ip: $IP.to_s
@@ -49,7 +57,8 @@ Vagrant.configure(2) do |config|
       master.vm.provider "virtualbox" do |vb|
         vb.name = "mesos-master-#{m_id}"
         vb.gui = false
-        vb.memory = "1024"
+        vb.cpus = 2
+        vb.memory = "1536"
       end
     end
   end
@@ -58,6 +67,8 @@ Vagrant.configure(2) do |config|
     config.vm.define "mesos-slave-#{s_id}" do |slave|
       slave.vm.hostname = "mesos-slave-#{s_id}"
       ansibleGroups["mesos-slave"].insert(-1, slave.vm.hostname)
+      ansibleGroups["flocker-agent"].insert(-1, slave.vm.hostname)
+      ansibleGroups["consul-client"].insert(-1, slave.vm.hostname)
 
       $IP = $IP.succ
       slave.vm.network "private_network", ip: $IP.to_s
@@ -76,12 +87,12 @@ Vagrant.configure(2) do |config|
       #
       if s_id === $MESOS_SLAVE_COUNT
         slave.vm.provision :ansible do |ansible|
-          ansible.playbook = "site.yml"
+          ansible.playbook = "playbook/site.yml"
           ansible.groups = ansibleGroups
           ansible.limit = "all"
           ansible.tags = "all"
           ansible.raw_arguments = [
-            "-e", "@vagrant.config.yml"
+            "-e", "@config/vagrant.config.yml"
           ]
         end
       end

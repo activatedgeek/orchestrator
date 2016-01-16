@@ -1,0 +1,71 @@
+---
+# tasks file for roles/consul
+- name: create a conf directories for consul
+  become: yes
+  file:
+    path: '{{ item }}'
+    state: directory
+    recurse: yes
+  with_items:
+    - '{{ consul.conf_dir }}'
+    - '{{ consul.template_conf_dir }}'
+    - '{{ consul.template_dir }}'
+  tags:
+    - consul
+
+- name: install dnsmasq
+  become: yes
+  apt:
+    name: dnsmasq
+    state: latest
+
+- name: install consul 0.6.2
+  become: yes
+  unarchive:
+    src: https://releases.hashicorp.com/consul/0.6.2/consul_0.6.2_linux_amd64.zip
+    dest: /usr/local/bin
+    mode: 'u+x'
+    copy: no
+    creates: /usr/local/bin/consul
+  tags:
+    - consul
+
+- name: install consul-server/client init.d service
+  become: yes
+  template:
+    src: consul.init.d.j2
+    dest: '/etc/init.d/consul-{{ mode }}'
+    mode: 'u+x'
+  when: mode is defined
+  tags:
+    - consul
+
+- include: consul-server.yml
+  when: mode is defined and mode == 'server'
+  tags:
+    - consul
+
+- include: consul-client.yml
+  when: mode is defined and mode == 'client'
+  tags:
+    - consul
+
+- include: consul-template.yml
+  tags:
+    - consul
+    - consul-template
+
+- name: enable DNS proxy for consul
+  become: yes
+  copy:
+    content: server=/consul/127.0.0.1#8600
+    dest: /etc/dnsmasq.d/10-consul
+  notify:
+    - restart dnsmasq
+
+- name: check dnsmasq online
+  become: yes
+  service:
+    name: dnsmasq
+    state: started
+    enabled: yes

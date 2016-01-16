@@ -1,0 +1,19 @@
+##
+# Ansible Configuration file for vagrant cluster
+#
+---
+##
+# network interface to use for
+# communication across nodes
+#
+network_interface: eth1
+
+##
+# name of the mesos cluster
+#
+mesos_clustername: vagrant-cluster
+
+##
+# Consul datacenter name
+#
+consul_datacenter: vagrant-cluster

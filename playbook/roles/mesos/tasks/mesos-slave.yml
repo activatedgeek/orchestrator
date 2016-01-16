@@ -1,0 +1,66 @@
+---
+- name: setup mesos zookeeper namespace
+  become: yes
+  template:
+    src: mesos.zk.j2
+    dest: /etc/mesos/zk
+  notify:
+    - restart mesos-slave
+  tags:
+    - mesos
+    - mesos-slave
+
+- name: setup mesos-slave hostname, ip
+  become: yes
+  template:
+    src: mesos-slave.hostname.j2
+    dest: '{{ item }}'
+  with_items:
+    - /etc/mesos-slave/hostname
+    - /etc/mesos-slave/ip
+  notify:
+    - restart mesos-slave
+  tags:
+    - mesos
+    - mesos-slave
+
+- name: add containerizers
+  become: yes
+  copy:
+    content: docker,mesos
+    dest: /etc/mesos-slave/containerizers
+  notify:
+    - restart mesos-slave
+  tags:
+    - mesos
+    - mesos-slave
+
+- name: update executor timeout for docker
+  become: yes
+  copy:
+    content: 10mins
+    dest: /etc/mesos-slave/executor_registration_timeout
+  notify:
+    - restart mesos-slave
+  tags:
+    - mesos
+    - mesos-slave
+
+- name: check start mesos-slave service
+  become: yes
+  service:
+    name: mesos-slave
+    state: started
+  tags:
+    - mesos
+    - mesos-slave
+
+- name: add mesos slave service to consul
+  become: yes
+  template:
+    src: consul/mesos-slave.json.j2
+    dest: /opt/consul/conf.d/mesos-slave.json
+  notify:
+    - restart consul-client
+  tags:
+    - consul

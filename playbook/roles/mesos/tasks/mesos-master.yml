@@ -1,0 +1,153 @@
+---
+- name: install marathon and chronos on master nodes
+  become: yes
+  apt:
+    name: '{{ item }}'
+    state: latest
+    update_cache: yes
+  with_items:
+    - marathon
+    - chronos
+  tags:
+    - marathon
+    - chronos
+
+- name: setup zookeeper master id
+  become: yes
+  template:
+    src: zookeeper.myid.j2
+    dest: /etc/zookeeper/conf/myid
+  notify:
+    - restart zookeeper
+  tags:
+    - zk
+
+- name: setup zookeeper config
+  become: yes
+  template:
+    src: zookeeper.zoo.cfg.j2
+    dest: /etc/zookeeper/conf/zoo.cfg
+  notify:
+    - restart zookeeper
+  tags:
+    - zk
+
+- name: setup mesos zookeeper namespace
+  become: yes
+  template:
+    src: mesos.zk.j2
+    dest: /etc/mesos/zk
+  notify:
+    - restart mesos-master
+    - restart zookeeper
+  tags:
+    - zk
+    - mesos
+    - mesos-master
+
+- name: setup mesos-master quorum
+  become: yes
+  template:
+    src: mesos-master.quorum.j2
+    dest: /etc/mesos-master/quorum
+  notify:
+    - restart mesos-master
+  tags:
+    - mesos
+    - mesos-master
+
+- name: setup mesos clustername
+  become: yes
+  copy:
+    content: '{{ mesos.clustername }}'
+    dest: /etc/mesos-master/cluster
+  notify:
+    - restart mesos-master
+  tags:
+    - mesos
+    - mesos-master
+
+- name: setup mesos-master hostname, ip
+  become: yes
+  template:
+    src: mesos-master.hostname.j2
+    dest: '{{ item }}'
+  with_items:
+    - /etc/mesos-master/hostname
+    - /etc/mesos-master/ip
+  notify:
+    - restart mesos-master
+  tags:
+    - mesos
+    - mesos-master
+
+- name: create marathon config dir
+  become: yes
+  file:
+    path: /etc/marathon/conf
+    state: directory
+    recurse: yes
+  tags:
+    - marathon
+
+- name: setup marathon, chronos hostname, ip
+  become: yes
+  template:
+    src: mesos-master.hostname.j2
+    dest: '{{ item }}'
+  with_items:
+    - /etc/marathon/conf/hostname
+    - /etc/chronos/conf/hostname
+  notify:
+    - restart marathon
+    - restart chronos
+  tags:
+    - marathon
+    - chronos
+
+- name: update executor timeout for docker
+  become: yes
+  copy:
+    content: '600000'
+    dest: /etc/marathon/conf/task_launch_timeout
+  notify:
+    - restart marathon
+  tags:
+    - marathon
+
+- name: check for mesos-master online
+  become: yes
+  service:
+    name: '{{ item }}'
+    state: started
+    enabled: yes
+  with_items:
+    - zookeeper
+    - mesos-master
+  tags:
+    - zk
+    - mesos
+    - mesos-master
+
+- name: check for marathon, chronos online
+  become: yes
+  service:
+    name: '{{ item }}'
+    state: started
+    enabled: yes
+  with_items:
+    - marathon
+    - chronos
+  tags:
+    - marathon
+    - chronos
+
+- name: add mesos master services to consul
+  become: yes
+  template:
+    src: consul/mesos-master.json.j2
+    dest: /opt/consul/conf.d/mesos-master.json
+  notify:
+    - restart consul-server
+  tags:
+    - consul

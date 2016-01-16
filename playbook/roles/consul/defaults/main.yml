@@ -1,0 +1,5 @@
+---
+# defaults file for roles/consul
+consul_datacenter: myconsuldc
+
+network_interface: eth0

@@ -1,0 +1,7 @@
+---
+dependencies:
+  - common
+  - java
+  - docker
+  # to enable a front-end proxy
+  - nginx

@@ -1,0 +1,3 @@
+---
+# defaults file for roles/mesos
+network_interface: eth0

@@ -1,0 +1,27 @@
+---
+# tasks file for roles/common
+- name: install basic common packages
+  become: yes
+  apt:
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - g++
+    - git
+    - curl
+    - wget
+    - unzip
+    - vim
+    - ntp
+    - python-pip
+  tags:
+    - common
+
+- name: add message of the day!
+  become: yes
+  copy:
+    src: motd
+    dest: /etc/motd
+  tags:
+    - common
+    - motd

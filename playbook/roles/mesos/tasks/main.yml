@@ -1,0 +1,39 @@
+---
+# tasks file for roles/mesos
+
+- name: add self signed key for mesosphere
+  become: yes
+  apt_key:
+    keyserver: hkp://keyserver.ubuntu.com:80
+    id: E56151BF
+    state: present
+  tags:
+    - mesosphere
+
+- name: add apt repo for mesosphere
+  become: yes
+  apt_repository:
+    repo: deb http://repos.mesosphere.io/ubuntu trusty main
+    state: present
+  tags:
+    - mesosphere
+
+##
+# @NOTE: mesos metapackage installs zookeeper as well
+#
+- name: install mesos
+  become: yes
+  apt:
+    name: mesos
+    state: latest
+    update_cache: yes
+  tags:
+    - mesos
+
+- include: mesos-master.yml
+  when: mode is defined and mode == 'master'
+
+- include: mesos-slave.yml
+  when: mode is defined and mode == 'slave'
+
+- include: consul-services.yml

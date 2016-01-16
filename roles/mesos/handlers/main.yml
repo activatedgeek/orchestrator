@@ -1,4 +1,0 @@
----
-# handlers file for roles/mesos
-- include: zookeeper.yml
-- include: mesos.yml

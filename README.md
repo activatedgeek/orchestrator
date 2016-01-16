@@ -1,11 +1,19 @@
-## Bare-Bones Mesos
+## bare-bones v0.2
 
-This is a bare bones `Mesos` cluster which sets up a basic
-requirements on top of `Ubuntu 14.04.3 LTS`. This project aims
-to be a highly opinionated list of practices for cluster
-management via `Mesos` (and other frameworks on top) which can
-get you setup for easy and reproducible development and production
-environments.
+This is the all-in-one solution to for:
+* Service deployments
+* Scaling of services
+* Automated service discovery
+* Load balancing
+* Zero configuration updates
+* Configuration Management
+* Continuous integration and deployment (in the pipeline)
+
+It is an ensemble of services, all tightly integrated. You never have to care
+about DevOps again!
+
+A vagrant cluster has been provided as a proof-of-concept showing the
+basic capabilities of the system.
 
 **Under active development. Cheers!**
 
@@ -18,77 +26,70 @@ The project depends on the following packages:
 
 ### Features
 
-This project sets up the following cluster and frameworks:
-* [`Mesos`](http://mesos.apache.org)
-  * GUI accessible at `IP_ADDRESS_OF_ANY_MASTER:5050`
-* [`Marathon`](https://mesosphere.github.io/marathon/)
-  * GUI accessible at `IP_ADDRESS_OF_ANY_MASTER:8080`
-* [`Chronos`](http://mesos.github.io/chronos/)
-	* GUI accessible at `IP_ADDRESS_OF_ANY_MASTER:4400`
+**NOTE**: Detailed documentation coming soon!
+([issue](https://github.com/activatedgeek/bare-bones/issues/7))
 
-* [`Docker`](https://www.docker.com) support for `Mesos`
-* [`Weave`](http://weave.works) (for automated service discovery of containers and DNS load balancing)
+**NOTE**: Almost all services have a GUI in place with health checks. `Please
+point your system's DNS server to any of the nodes` to get rid of ports in your
+URLs.
 
-**Please check for new features list [here](https://github.com/activatedgeek/bare-bones-mesos/issues/1)**
+#### Service Deployments
+All service deployments are handled via `Mesos` and `Marathon` with
+`Docker` as the executor. `Chronos` has been provided to allow execution
+of scheduled tasks. To access `Mesos`, point your browser to `mesos.service.consul`
 
-### Setup
+#### Scaling of Services
+`Marathon` provides an amazing API to execute jobs and scale as needed. It can
+be accessed at `marathon.service.consul`.
 
-While starting the cluster, the following `env` variables are available to be configured:
+#### Automated Service Discovery
+Service discovery is all automated with zero-configuration thanks to
+`Consul` and `Registrator`. All docker containers created in any node of the
+`Mesos` cluster will have DNS resolution via `Consul` setup. Just request for
+your dependent service!
 
+#### Load balancing
+Load balancing is automatically done via `Nginx` which builds on top of
+service discovery provided by `Consul` and `Consul-Template`
+
+#### Zero Configuration Updates
+`Consul-Template` listens to any changes in the services and regenerates any
+templates to render and appropriate commands to execute henceforth.
+
+#### Configuration Management
+All configuration management is done via `Ansible`, which provides agent-less
+approach, therefore no pre-configuration is needed on any machines in the cluster
+except for SSH access.
+
+### Usage
+
+For vagrant VM provisioning, the following `env` variables are available:
 * `MESOS_MASTER_COUNT`: number of Mesos masters (default: `1`)
 * `MESOS_SLAVE_COUNT`: number of Mesos slaves (default: `2`)
 * `IP_CIDR_PREFIX`: IP addresses prefixes for machines (default: `192.168.80.0/24`)
-* `ANSIBLE_PLAYBOOK`: ansible playbook for provisioning (default: `mesos.yml`)
-* `ANSIBLE_TAGS`: comma-separated ansible tags for provisioning (default: `all`)
 
-All the above variables are optional and have been set to reasonable defaults for a personal development cluster.
+All the above variables are optional and have been set to reasonable defaults
+for a cluster on home machine. (starting to suck now!)
 
 To setup any of the above variables, simply do a variable export as:
 ```
 > export MESOS_MASTER_COUNT=3
 > export MESOS_SLAVE_COUNT=6
 > export IP_CIDR_PREFIX=10.0.1.0/24
-> export ANSIBLE_PLAYBOOK=mesos.yml
-> export ANSIBLE_TAGS=all
 ```
 
-### Bootstrap
-
-To start the cluster, run:
+To bootstrap the cluster and enable a `registrator` container on each slave node:
 ```
 > vagrant up
+> make registrator
 ```
 
-To disable provisioning (and use your own choice of provisioner later):
-```
-> vagrant up --no-provision
-```
-
-To provision after the machines have been created:
+To provision the cluster (should be already done once you do `vagrant up`):
 ```
 > vagrant provision
 ```
 
-To provision only the master nodes:
-```
-> ANSIBLE_PLAYBOOK=mesos-master.yml vagrant provision
-```
-
-To provision only the slave nodes:
-```
-> ANSIBLE_PLAYBOOK=mesos-slave.yml vagrant provision
-```
-
-#### Provisioning Variables
-
-* `mesos.cluster_name`: name of the cluster (default: `mycluster`)
-* `weave.dns_domain`: name of the weaveDNS domain (default: `mycluster.local.`)
-* `network_interface`: network interface device (default: `eth1`)
-
-### Example Usage
-
-After you have provisioned, you will want to provision applications via the
-[`Marathon REST API`](https://mesosphere.github.io/marathon/docs/rest-api.html).
+#### Create A Sample service
 ```json
 {
   "id": "test-outyet",
@@ -109,32 +110,33 @@ After you have provisioned, you will want to provision applications via the
         }
       ],
       "parameters": [
-        { "key": "hostname", "value": "outyet.mycluster.local" }
+        { "key": "env", "value": "SERVICE_NAME=myoutyet" }
       ]
     }
   }
 }
 ```
 
-Now you can `POST` this JSON to marathon at:
+Submit this JSON job to Marathon as:
 ```
-> curl -X POST IP_OF_ANY_MASTER:8080/v2/apps \
-       -d @outyet.json \
-       -H "Content-type: application/json"
+> curl -X POST marathon.service.consul/v2/apps \
+  -d @outyet.json \
+  -H "Content-type: application/json"
 ```
 
-#### Notes
-* It is important to send the hostname parameter so that
-weave can register the docker container in its DNS service.
-* The `portMappings` are only essential for access outside the
-docker containers.
+Once the job is started, you should be able to do:
+```
+> dig myoutyet.service.consul -t SRV
+```
+The output will show you the node and ports this service operates at.
 
-### Contribution Guidelines ###
+### Contribution Guidelines
 
 * Fork this repository
 * Create your working branch and develop your feature
 * Submit your pull request
-* Watch out for issues [here](https://github.com/activatedgeek/ansible-vagrant-mesos/issues)
+* Watch out for [issues](https://github.com/activatedgeek/bare-bones/issues)
 
-### Problems? ###
-Raise an issue [here](https://github.com/activatedgeek/ansible-vagrant-mesos/issues/new) ! I promise I'll reply soon!
+### Problems?
+Raise an [issue](https://github.com/activatedgeek/bare-bones/issues/new)!
+I promise I'll reply soon!

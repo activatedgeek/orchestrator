@@ -1,0 +1,37 @@
+##
+# A sample generic purpose inventory file
+# @NOTE vagrant generates its own inventory during
+# provisioning
+#
+mesos-master-1 ansible_ssh_host=mesos-master-1-IP
+mesos-slave-1 ansible_ssh_host=mesos-slave-1-IP
+mesos-slave-2 ansible_ssh_host=mesos-slave-2-IP
+
+[mesos-master]
+mesos-master-1
+
+[mesos-slave]
+mesos-slave-1
+mesos-slave-2
+
+##
+# establish a consul server
+# cluster along with the mesos master
+#
+[consul-server]
+mesos-master-1
+
+##
+# consul client must be installed
+# on all mesos slaves
+#
+[consul-client]
+mesos-slave-1
+mesos-slave-2
+
+[flocker-control]
+mesos-master-1
+
+[flocker-agent]
+mesos-slave-1
+mesos-slave-2
