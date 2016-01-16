@@ -1,14 +1,16 @@
 {
-  "service": {
-    "name": "mesos-slave",
-    "address": "{{ hostvars[ansible_hostname]['ansible_' + network.interface].ipv4.address }}",
-    "port": 5050,
-    "enableTagOverride": false,
-    "checks": [
-      {
-        "tcp": "{{ hostvars[ansible_hostname]['ansible_' + network.interface].ipv4.address }}:5051",
-        "interval": "10s"
-      }
-    ]
-  }
+  "services": [
+    {
+      "name": "mesos-slave",
+      "address": "{{ hostvars[ansible_hostname]['ansible_' + network.interface].ipv4.address }}",
+      "port": 5051,
+      "enableTagOverride": false,
+      "checks": [
+        {
+          "tcp": "{{ hostvars[ansible_hostname]['ansible_' + network.interface].ipv4.address }}:5051",
+          "interval": "10s"
+        }
+      ]
+    }
+  ]
 }
