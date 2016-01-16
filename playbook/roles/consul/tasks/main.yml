@@ -1,11 +1,15 @@
 ---
 # tasks file for roles/consul
-- name: create a conf directory for consul
+- name: create a conf directories for consul
   become: yes
   file:
-    path: /opt/consul/conf.d
+    path: '{{ item }}'
     state: directory
     recurse: yes
+  with_items:
+    - '{{ consul.conf_dir }}'
+    - '{{ consul.template_conf_dir }}'
+    - '{{ consul.template_dir }}'
   tags:
     - consul
 
@@ -26,19 +30,7 @@
   tags:
     - consul
 
-- name: install consul template 0.12.1
-  become: yes
-  unarchive:
-    src: https://releases.hashicorp.com/consul-template/0.12.1/consul-template_0.12.1_linux_amd64.zip
-    dest: /usr/local/bin
-    mode: 'u+x'
-    copy: no
-    creates: /usr/local/bin/consul-template
-  tags:
-    - consul
-    - consul-template
-
-- name: install init.d service
+- name: install consul-server/client init.d service
   become: yes
   template:
     src: consul.init.d.j2
@@ -57,6 +49,11 @@
   when: mode is defined and mode == 'client'
   tags:
     - consul
+
+- include: consul-template.yml
+  tags:
+    - consul
+    - consul-template
 
 - name: enable DNS proxy for consul
   become: yes

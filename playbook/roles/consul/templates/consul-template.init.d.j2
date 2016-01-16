@@ -1,16 +1,16 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          consul
+# Provides:          consul-template
 # Required-Start:    $local_fs $network $named $time $syslog
 # Required-Stop:     $local_fs $network $named $time $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Description:       Consul Agent Runner Service
+# Description:       Consul Template Service
 ### END INIT INFO
 
-SCRIPT="consul agent -config-dir={{ consul.conf_dir }}"
+SCRIPT="consul-template -config={{ consul.template_conf_dir }}"
 RUNAS=root
-NAME=consul
+NAME=consul-template
 
 PIDFILE=/var/run/$NAME.pid
 LOGFILE=/var/log/consul/$NAME.log

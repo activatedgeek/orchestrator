@@ -7,6 +7,13 @@
     state: restarted
     enabled: yes
 
+- name: restart consul-template
+  become: yes
+  service:
+    name: consul-template
+    state: restarted
+    enabled: yes
+
 - name: restart consul-client
   become: yes
   service:
