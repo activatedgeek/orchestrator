@@ -7,7 +7,7 @@
   tags:
     - java8
 
-- name: update debconf for Java 8
+- name: accept Java 8 license
   become: yes
   debconf:
     name: oracle-java8-installer
@@ -23,5 +23,7 @@
     name: oracle-java8-installer
     state: latest
     update_cache: yes
+  environment:
+    DEBIAN_FRONTEND: noninteractive
   tags:
     - java8
