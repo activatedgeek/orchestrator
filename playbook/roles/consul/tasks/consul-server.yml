@@ -3,7 +3,7 @@
   become: yes
   template:
     src: consul-server.json.j2
-    dest: /opt/consul/conf.d/00consul-server.json
+    dest: '{{ consul.conf_dir }}/00consul-server.json'
   notify:
     - restart consul-server
 
@@ -11,7 +11,7 @@
   become: yes
   template:
     src: consul-ui.json.j2
-    dest: /opt/consul/conf.d/consul-ui.json
+    dest: '{{ consul.conf_dir }}/consul-ui.json'
   notify:
     - restart consul-server
 

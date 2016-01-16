@@ -19,7 +19,7 @@
 
 - name: add message of the day!
   become: yes
-  file:
+  copy:
     src: motd
     dest: /etc/motd
   tags:

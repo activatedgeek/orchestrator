@@ -35,3 +35,5 @@
 
 - include: mesos-slave.yml
   when: mode is defined and mode == 'slave'
+
+- include: consul-services.yml
