@@ -3,6 +3,3 @@
 network_interface: eth0
 
 mesos_clustername: mycluster
-
-# default domain name @NOTE always end with a '.'
-weave_dns_domain: mycluster.local.
