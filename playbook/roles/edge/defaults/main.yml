@@ -1,0 +1,3 @@
+---
+# defaults file for roles/edge
+network_interface: eth0

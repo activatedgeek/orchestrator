@@ -1,4 +1,16 @@
 ---
+- name: create a conf directories for consul template
+  become: yes
+  file:
+    path: '{{ item }}'
+    state: directory
+    recurse: yes
+  with_items:
+    - '{{ consul.template_conf_dir }}'
+    - '{{ consul.template_dir }}'
+  tags:
+    - consul
+
 - name: install consul template 0.12.1
   become: yes
   unarchive:

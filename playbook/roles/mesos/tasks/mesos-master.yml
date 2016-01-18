@@ -147,7 +147,16 @@
   template:
     src: consul/mesos-master.json.j2
     dest: /opt/consul/conf.d/mesos-master.json
-  notify:
-    - restart consul-server
+  register: mesos_master_consul_services
+  tags:
+    - consul
+
+- name: restart consul-server
+  become: yes
+  service:
+    name: consul-server
+    state: restarted
+    enabled: yes
+  when: mesos_master_consul_services.changed
   tags:
     - consul

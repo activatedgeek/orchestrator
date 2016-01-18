@@ -1,0 +1,16 @@
+{
+  "services": [
+    {
+      "name": "dnsmasq-proxy",
+      "address": "{{ hostvars[ansible_hostname]['ansible_' + network.interface].ipv4.address }}",
+      "port": 53,
+      "enableTagOverride": false,
+      "checks": [
+        {
+          "tcp": "{{ hostvars[ansible_hostname]['ansible_' + network.interface].ipv4.address }}:53",
+          "interval": "10s"
+        }
+      ]
+    }
+  ]
+}

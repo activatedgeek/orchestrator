@@ -30,10 +30,9 @@ $IP = $IP.succ
 ansibleGroups = {
   "mesos-master" => [],
   "mesos-slave" => [],
-  "flocker-control" => [],
-  "flocker-agent" => [],
   "consul-server" => [],
-  "consul-client" => []
+  "consul-client" => [],
+  "edge" => []
 }
 
 Vagrant.configure(2) do |config|
@@ -47,15 +46,12 @@ Vagrant.configure(2) do |config|
       master.vm.hostname = "mesos-master-#{m_id}"
       ansibleGroups["mesos-master"].insert(-1, master.vm.hostname)
       ansibleGroups["consul-server"].insert(-1, master.vm.hostname)
-      if m_id === 1
-        ansibleGroups["flocker-control"].insert(-1, master.vm.hostname)
-      end
 
       $IP = $IP.succ
       master.vm.network "private_network", ip: $IP.to_s
 
       master.vm.provider "virtualbox" do |vb|
-        vb.name = "mesos-master-#{m_id}"
+        vb.name = master.vm.hostname
         vb.gui = false
         vb.cpus = 2
         vb.memory = "1536"
@@ -67,35 +63,46 @@ Vagrant.configure(2) do |config|
     config.vm.define "mesos-slave-#{s_id}" do |slave|
       slave.vm.hostname = "mesos-slave-#{s_id}"
       ansibleGroups["mesos-slave"].insert(-1, slave.vm.hostname)
-      ansibleGroups["flocker-agent"].insert(-1, slave.vm.hostname)
       ansibleGroups["consul-client"].insert(-1, slave.vm.hostname)
 
       $IP = $IP.succ
       slave.vm.network "private_network", ip: $IP.to_s
 
       slave.vm.provider "virtualbox" do |vb|
-        vb.name = "mesos-slave-#{s_id}"
+        vb.name = slave.vm.hostname
         vb.gui = false
         vb.cpus = 2
         vb.memory = "1536"
       end
+    end
+  end
 
-      #
-      # @TODO WARNING!! This is a workaround
-      # provisioner is only attached to the last machine, to prevent
-      # provisioning after each machine
-      #
-      if s_id === $MESOS_SLAVE_COUNT
-        slave.vm.provision :ansible do |ansible|
-          ansible.playbook = "playbook/site.yml"
-          ansible.groups = ansibleGroups
-          ansible.limit = "all"
-          ansible.tags = "all"
-          ansible.raw_arguments = [
-            "-e", "@config/vagrant.config.yml"
-          ]
-        end
-      end
+  config.vm.define "edge-1" do |edge|
+    edge.vm.hostname = "edge-1"
+    ansibleGroups["consul-client"].insert(-1, edge.vm.hostname)
+    ansibleGroups["edge"].insert(-1, edge.vm.hostname)
+
+    $IP = $IP.succ
+    edge.vm.network "private_network", ip: $IP.to_s
+
+    edge.vm.provider "virtualbox" do |vb|
+      vb.name = edge.vm.hostname
+      vb.gui = false
+      vb.memory = "512"
+    end
+
+    ##
+    # @NOTE a workaround to attach provisioner
+    # to last node
+    #
+    edge.vm.provision :ansible do |ansible|
+      ansible.playbook = "playbook/site.yml"
+      ansible.groups = ansibleGroups
+      ansible.limit = "edge"
+      ansible.tags = "all"
+      ansible.raw_arguments = [
+        "-e", "@config/vagrant.config.yml"
+      ]
     end
   end
 end

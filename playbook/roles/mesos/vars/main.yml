@@ -5,6 +5,3 @@ network:
 
 mesos:
   clustername: '{{ mesos_clustername }}'
-
-weave:
-  dns_domain: '{{ weave_dns_domain }}'

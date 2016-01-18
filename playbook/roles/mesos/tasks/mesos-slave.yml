@@ -60,7 +60,16 @@
   template:
     src: consul/mesos-slave.json.j2
     dest: /opt/consul/conf.d/mesos-slave.json
-  notify:
-    - restart consul-client
+  register: mesos_slave_consul_services
+  tags:
+    - consul
+
+- name: restart consul client
+  become: yes
+  service:
+    name: consul-client
+    state: restarted
+    enabled: yes
+  when: mesos_slave_consul_services.changed
   tags:
     - consul

@@ -35,42 +35,6 @@
           "interval": "10s"
         }
       ]
-    },
-    {
-      "name": "mesos",
-      "address": "{{ hostvars[ansible_hostname]['ansible_' + network.interface].ipv4.address }}",
-      "port": 80,
-      "enableTagOverride": false,
-      "checks": [
-        {
-          "http": "http://{{ hostvars[ansible_hostname]['ansible_' + network.interface].ipv4.address }}:80",
-          "interval": "10s"
-        }
-      ]
-    },
-    {
-      "name": "marathon",
-      "address": "{{ hostvars[ansible_hostname]['ansible_' + network.interface].ipv4.address }}",
-      "port": 80,
-      "enableTagOverride": false,
-      "checks": [
-        {
-          "http": "http://{{ hostvars[ansible_hostname]['ansible_' + network.interface].ipv4.address }}:80",
-          "interval": "10s"
-        }
-      ]
-    },
-    {
-      "name": "chronos",
-      "address": "{{ hostvars[ansible_hostname]['ansible_' + network.interface].ipv4.address }}",
-      "port": 80,
-      "enableTagOverride": false,
-      "checks": [
-        {
-          "http": "http://{{ hostvars[ansible_hostname]['ansible_' + network.interface].ipv4.address }}:80",
-          "interval": "10s"
-        }
-      ]
     }
   ]
 }
