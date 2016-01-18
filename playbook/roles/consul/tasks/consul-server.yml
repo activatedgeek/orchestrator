@@ -7,14 +7,6 @@
   notify:
     - restart consul-server
 
-- name: add consul-ui service to checks
-  become: yes
-  template:
-    src: consul-ui.json.j2
-    dest: '{{ consul.conf_dir }}/consul-ui.json'
-  notify:
-    - restart consul-server
-
 - name: start consul-server
   become: yes
   service:

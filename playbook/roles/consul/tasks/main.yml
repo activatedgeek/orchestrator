@@ -8,8 +8,7 @@
     recurse: yes
   with_items:
     - '{{ consul.conf_dir }}'
-    - '{{ consul.template_conf_dir }}'
-    - '{{ consul.template_dir }}'
+    - /var/log/consul
   tags:
     - consul
 
