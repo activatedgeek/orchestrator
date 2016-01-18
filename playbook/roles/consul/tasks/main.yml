@@ -61,6 +61,8 @@
     dest: /etc/dnsmasq.d/10-consul
   notify:
     - restart dnsmasq
+  tags:
+    - dnsmasq
 
 - name: check dnsmasq online
   become: yes
@@ -68,3 +70,16 @@
     name: dnsmasq
     state: started
     enabled: yes
+  tags:
+    - dnsmasq
+
+- name: add dnsmasq proxy service check to consul
+  become: yes
+  template:
+    src: dnsmasq-proxy.json.j2
+    dest: '{{ consul.conf_dir }}/dnsmasq-proxy.json'
+  when: mode is defined
+  notify:
+    - 'restart consul-{{ mode }}'
+  tags:
+    - dnsmasq
