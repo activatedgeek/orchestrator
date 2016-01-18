@@ -1,5 +1,6 @@
 .vagrant
 pybin/
+facts_cache/
 
 *.config.yml
 !vagrant.config.yml
