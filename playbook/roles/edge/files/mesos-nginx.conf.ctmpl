@@ -15,15 +15,6 @@ server {
   server_name mesos.service.consul;
 
   location / {
-    proxy_buffering on;
-    proxy_buffer_size 1k;
-    proxy_buffers 24 4k;
-    proxy_busy_buffers_size 8k;
-    proxy_max_temp_file_size 2048m;
-    proxy_temp_file_write_size 32k;
-
-    client_max_body_size 100M;
-
     proxy_set_header HOST $host;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header X-Real-IP $remote_addr;
@@ -38,15 +29,6 @@ server {
   server_name marathon.service.consul;
 
   location / {
-    proxy_buffering on;
-    proxy_buffer_size 1k;
-    proxy_buffers 24 4k;
-    proxy_busy_buffers_size 8k;
-    proxy_max_temp_file_size 2048m;
-    proxy_temp_file_write_size 32k;
-
-    client_max_body_size 100M;
-
     proxy_set_header HOST $host;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header X-Real-IP $remote_addr;
@@ -61,15 +43,6 @@ server {
   server_name chronos.service.consul;
 
   location / {
-    proxy_buffering on;
-    proxy_buffer_size 1k;
-    proxy_buffers 24 4k;
-    proxy_busy_buffers_size 8k;
-    proxy_max_temp_file_size 2048m;
-    proxy_temp_file_write_size 32k;
-
-    client_max_body_size 100M;
-
     proxy_set_header HOST $host;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header X-Real-IP $remote_addr;

@@ -1,0 +1,8 @@
+---
+# handlers file for roles/edge
+- name: restart consul-template
+  become: yes
+  service:
+    name: consul-template
+    state: restarted
+    enabled: yes

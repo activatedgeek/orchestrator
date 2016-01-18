@@ -1,0 +1,4 @@
+---
+# vars file for roles/edge
+network:
+  interface: '{{ network_interface }}'

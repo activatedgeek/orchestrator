@@ -1,0 +1,15 @@
+---
+# tasks file for roles/edge
+- name: add consul-template for mesos nginx proxy service
+  become: yes
+  copy:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+  with_items:
+    - { 'src': 'mesos-consul.hcl', 'dest': '/opt/consul/template.conf.d/mesos-consul.hcl' }
+    - { 'src': 'mesos-nginx.conf.ctmpl', 'dest': '/opt/consul/template.d/mesos-nginx.conf.ctmpl' }
+  notify:
+    - restart consul-template
+  tags:
+    - consul-template
+    - mesos
