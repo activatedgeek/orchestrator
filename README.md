@@ -1,6 +1,7 @@
-## bare-bones v0.2
+## Orchestrator
 
-This is the all-in-one solution to for:
+***The DevOps swiss-knife***
+
 * Service deployments
 * Scaling of services
 * Automated service discovery
@@ -8,6 +9,7 @@ This is the all-in-one solution to for:
 * Zero configuration updates
 * Configuration Management
 * Continuous integration and deployment (in the pipeline)
+* Rolling Deploys (in the pipeline)
 
 It is an ensemble of services, all tightly integrated. You never have to care
 about DevOps again!
