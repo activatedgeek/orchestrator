@@ -2,25 +2,9 @@
 # vi: set ft=ruby :
 require 'ipaddr'
 
-def log (level, msg)
-  puts "[#{level}] #{msg}"
-end
-
-##
-# Available Options (use the same options when using "vagrant destroy")
-#
-# MESOS_MASTER_COUNT=
-# MESOS_SLAVE_COUNT=
-# IP_CIDR_PREFIX=
-#
-$MESOS_MASTER_COUNT = (ENV['MESOS_MASTER_COUNT'] || 1).to_i
-log("vars", "MESOS_MASTER_COUNT=#{$MESOS_MASTER_COUNT}")
-
-$MESOS_SLAVE_COUNT = (ENV['MESOS_SLAVE_COUNT'] || 2).to_i
-log("vars", "MESOS_SLAVE_COUNT=#{$MESOS_SLAVE_COUNT}")
-
-$IP_CIDR_PREFIX = ENV['IP_CIDR_PREFIX'] || "192.168.80.0/24"
-log("vars", "IP_CIDR_PREFIX='#{$IP_CIDR_PREFIX}'")
+$MESOS_MASTER_COUNT = 1
+$MESOS_SLAVE_COUNT = 2
+$IP_CIDR_PREFIX = "192.168.80.0/24"
 
 $IP = IPAddr.new($IP_CIDR_PREFIX)
 # skip first address
@@ -31,8 +15,7 @@ ansibleGroups = {
   "mesos-master" => [],
   "mesos-slave" => [],
   "consul-server" => [],
-  "consul-client" => [],
-  "edge" => []
+  "consul-agent" => []
 }
 
 Vagrant.configure(2) do |config|
@@ -53,7 +36,7 @@ Vagrant.configure(2) do |config|
       master.vm.provider "virtualbox" do |vb|
         vb.name = master.vm.hostname
         vb.gui = false
-        vb.cpus = 2
+        vb.cpus = 1
         vb.memory = "1536"
       end
     end
@@ -63,7 +46,7 @@ Vagrant.configure(2) do |config|
     config.vm.define "mesos-slave-#{s_id}" do |slave|
       slave.vm.hostname = "mesos-slave-#{s_id}"
       ansibleGroups["mesos-slave"].insert(-1, slave.vm.hostname)
-      ansibleGroups["consul-client"].insert(-1, slave.vm.hostname)
+      ansibleGroups["consul-agent"].insert(-1, slave.vm.hostname)
 
       $IP = $IP.succ
       slave.vm.network "private_network", ip: $IP.to_s
@@ -71,38 +54,25 @@ Vagrant.configure(2) do |config|
       slave.vm.provider "virtualbox" do |vb|
         vb.name = slave.vm.hostname
         vb.gui = false
-        vb.cpus = 2
+        vb.cpus = 1
         vb.memory = "1536"
       end
-    end
-  end
 
-  config.vm.define "edge-1" do |edge|
-    edge.vm.hostname = "edge-1"
-    ansibleGroups["consul-client"].insert(-1, edge.vm.hostname)
-    ansibleGroups["edge"].insert(-1, edge.vm.hostname)
-
-    $IP = $IP.succ
-    edge.vm.network "private_network", ip: $IP.to_s
-
-    edge.vm.provider "virtualbox" do |vb|
-      vb.name = edge.vm.hostname
-      vb.gui = false
-      vb.memory = "512"
-    end
-
-    ##
-    # @NOTE a workaround to attach provisioner
-    # to last node
-    #
-    edge.vm.provision :ansible do |ansible|
-      ansible.playbook = "playbook/site.yml"
-      ansible.groups = ansibleGroups
-      ansible.limit = "edge"
-      ansible.tags = "all"
-      ansible.raw_arguments = [
-        "-e", "@config/vagrant.config.yml"
-      ]
+      ##
+      # @NOTE a workaround to attach provisioner
+      # to last node
+      #
+      if s_id == $MESOS_SLAVE_COUNT
+        slave.vm.provision :ansible do |ansible|
+          ansible.playbook = "playbook/site.yml"
+          ansible.groups = ansibleGroups
+          ansible.limit = "all"
+          ansible.tags = "all"
+          ansible.raw_arguments = [
+            "-e", "@config/vagrant.config.yml"
+          ]
+        end
+      end
     end
   end
 end

@@ -17,6 +17,9 @@
   apt:
     name: dnsmasq
     state: latest
+  tags:
+    - consul
+    - dnsmasq
 
 - name: install consul 0.6.2
   become: yes
@@ -44,8 +47,8 @@
   tags:
     - consul
 
-- include: consul-client.yml
-  when: mode is defined and mode == 'client'
+- include: consul-agent.yml
+  when: mode is defined and mode == 'agent'
   tags:
     - consul
 

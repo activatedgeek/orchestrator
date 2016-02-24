@@ -3,15 +3,19 @@
   roles:
     - common
 
-# @NOTE currently on all mesos master nodes
+##
+# consul server cluster on all master nodes
+# &
+# consul agent cluster (joined with the servers)
+# on all mesos slave nodes
+##
 - hosts: consul-server
   roles:
     - { role: 'consul', mode: 'server' }
 
-# @NOTE everywhere except the mesos master nodes
-- hosts: consul-client
+- hosts: consul-agent
   roles:
-    - { role: 'consul', mode: 'client' }
+    - { role: 'consul', mode: 'agent' }
 
 - hosts: mesos-master
   roles:
@@ -20,16 +24,3 @@
 - hosts: mesos-slave
   roles:
     - { role: 'mesos', mode: 'slave' }
-
-- hosts: edge
-  roles:
-    - edge
-
-# @NOTE work in progress
-# - hosts: flocker-control
-#   roles:
-#     - { role: 'flocker', mode: 'control' }
-#
-# - hosts: flocker-agent
-#   roles:
-#     - { role: 'flocker', mode: 'agent' }
