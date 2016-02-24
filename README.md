@@ -73,7 +73,7 @@ To bootstrap the cluster and enable a `registrator` container on each slave node
 
 To provision the cluster (should be already done once you do `vagrant up`):
 ```
-> vagrant provision
+> make provision
 ```
 
 #### Create A Sample service

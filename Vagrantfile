@@ -5,6 +5,7 @@ require 'ipaddr'
 $MESOS_MASTER_COUNT = 1
 $MESOS_SLAVE_COUNT = 2
 $IP_CIDR_PREFIX = "192.168.80.0/24"
+$PLAYBOOK = ENV['PLAYBOOK'] || "site.yml"
 
 $IP = IPAddr.new($IP_CIDR_PREFIX)
 # skip first address
@@ -18,6 +19,8 @@ ansibleGroups = {
   "consul-agent" => []
 }
 
+ansibleHostVars = {}
+
 Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu/trusty64"
   config.vm.box_check_update = false
@@ -27,6 +30,9 @@ Vagrant.configure(2) do |config|
 
     config.vm.define "mesos-master-#{m_id}" do |master|
       master.vm.hostname = "mesos-master-#{m_id}"
+      ansibleHostVars[master.vm.hostname] = {
+        "zookeeper_id" => m_id
+      }
       ansibleGroups["mesos-master"].insert(-1, master.vm.hostname)
       ansibleGroups["consul-server"].insert(-1, master.vm.hostname)
 
@@ -59,13 +65,13 @@ Vagrant.configure(2) do |config|
       end
 
       ##
-      # @NOTE a workaround to attach provisioner
-      # to last node
-      #
+      # attach provisioner to last node for parallel provisioning
+      ##
       if s_id == $MESOS_SLAVE_COUNT
         slave.vm.provision :ansible do |ansible|
-          ansible.playbook = "playbook/site.yml"
+          ansible.playbook = "playbook/#{$PLAYBOOK}"
           ansible.groups = ansibleGroups
+          ansible.host_vars = ansibleHostVars
           ansible.limit = "all"
           ansible.tags = "all"
           ansible.raw_arguments = [
