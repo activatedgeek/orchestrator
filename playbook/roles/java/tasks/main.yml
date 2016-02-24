@@ -3,27 +3,17 @@
 - name: add Java 8 ppa
   become: yes
   apt_repository:
-    repo: ppa:webupd8team/java
+    repo: ppa:openjdk-r/ppa
   tags:
-    - java8
-
-- name: accept Java 8 license
-  become: yes
-  debconf:
-    name: oracle-java8-installer
-    question: shared/accepted-oracle-license-v1-1
-    vtype: select
-    value: true
-  tags:
-    - java8
+    - openjdk8
 
 - name: install Java 8
   become: yes
   apt:
-    name: oracle-java8-installer
+    name: openjdk-8-jdk
     state: latest
     update_cache: yes
   environment:
     DEBIAN_FRONTEND: noninteractive
   tags:
-    - java8
+    - openjdk8

@@ -3,33 +3,46 @@
   roles:
     - common
 
-# @NOTE currently on all mesos master nodes
+##
+# consul server cluster on all master nodes
+# &
+# consul agent cluster (joined with the servers)
+# on all mesos slave nodes
+##
 - hosts: consul-server
   roles:
     - { role: 'consul', mode: 'server' }
 
-# @NOTE everywhere except the mesos master nodes
-- hosts: consul-client
+- hosts: consul-agent
   roles:
-    - { role: 'consul', mode: 'client' }
+    - { role: 'consul', mode: 'agent' }
 
+##
+# Install mesos-master and slave on respective nodes
+# @NOTE: mesos-slave must be stopped on master and mesos-master on slave
+# manually as done below to prevent unncessary master node on every slave
+##
 - hosts: mesos-master
   roles:
     - { role: 'mesos', mode: 'master' }
+  tasks:
+    - name: stop mesos-slave
+      become: yes
+      service:
+        name: mesos-slave
+        state: stopped
+        enabled: no
 
 - hosts: mesos-slave
   roles:
     - { role: 'mesos', mode: 'slave' }
-
-- hosts: edge
-  roles:
-    - edge
-
-# @NOTE work in progress
-# - hosts: flocker-control
-#   roles:
-#     - { role: 'flocker', mode: 'control' }
-#
-# - hosts: flocker-agent
-#   roles:
-#     - { role: 'flocker', mode: 'agent' }
+  tasks:
+    - name: stop mesos-master and zk services
+      become: yes
+      service:
+        name: '{{ item }}'
+        state: stopped
+        enabled: no
+      with_items:
+        - mesos-master
+        - zookeeper

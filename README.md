@@ -65,21 +65,6 @@ except for SSH access.
 
 ### Usage
 
-For vagrant VM provisioning, the following `env` variables are available:
-* `MESOS_MASTER_COUNT`: number of Mesos masters (default: `1`)
-* `MESOS_SLAVE_COUNT`: number of Mesos slaves (default: `2`)
-* `IP_CIDR_PREFIX`: IP addresses prefixes for machines (default: `192.168.80.0/24`)
-
-All the above variables are optional and have been set to reasonable defaults
-for a cluster on home machine. (starting to suck now!)
-
-To setup any of the above variables, simply do a variable export as:
-```
-> export MESOS_MASTER_COUNT=3
-> export MESOS_SLAVE_COUNT=6
-> export IP_CIDR_PREFIX=10.0.1.0/24
-```
-
 To bootstrap the cluster and enable a `registrator` container on each slave node:
 ```
 > vagrant up
@@ -88,7 +73,7 @@ To bootstrap the cluster and enable a `registrator` container on each slave node
 
 To provision the cluster (should be already done once you do `vagrant up`):
 ```
-> vagrant provision
+> make provision
 ```
 
 #### Create A Sample service
