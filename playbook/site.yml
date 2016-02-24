@@ -44,5 +44,5 @@
         state: stopped
         enabled: no
       with_items:
-        - mesos-slave
+        - mesos-master
         - zookeeper

@@ -5,6 +5,8 @@ network:
 
 mesos:
   clustername: '{{ mesos_clustername }}'
+  slave:
+    attributes: '{{ mesos_slave_attributes }}'
 
 zookeeper:
   id: '{{ zookeeper_id }}'

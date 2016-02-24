@@ -46,6 +46,17 @@
     - mesos
     - mesos-slave
 
+- name: add attributes for mesos-slave
+  become: yes
+  copy:
+    content: '{{ mesos.slave.attributes }}'
+    dest: /etc/mesos-slave/attributes
+  notify:
+    - restart mesos-slave
+  tags:
+    - mesos
+    - mesos-slave
+
 - name: check start mesos-slave service
   become: yes
   service:

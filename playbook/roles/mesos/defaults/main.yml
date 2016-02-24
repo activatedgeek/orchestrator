@@ -3,3 +3,5 @@
 network_interface: eth0
 
 mesos_clustername: mycluster
+
+mesos_slave_attributes: ''
