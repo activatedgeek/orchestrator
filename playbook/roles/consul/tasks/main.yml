@@ -18,13 +18,12 @@
     name: dnsmasq
     state: latest
   tags:
-    - consul
     - dnsmasq
 
-- name: install consul 0.6.2
+- name: install consul 0.6.3
   become: yes
   unarchive:
-    src: https://releases.hashicorp.com/consul/0.6.2/consul_0.6.2_linux_amd64.zip
+    src: https://releases.hashicorp.com/consul/0.6.3/consul_0.6.3_linux_amd64.zip
     dest: /usr/local/bin
     mode: 'u+x'
     copy: no
