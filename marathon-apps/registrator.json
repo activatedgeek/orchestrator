@@ -1,22 +1,41 @@
 {
-	"id": "registrator",
-	"cpus": 0.5,
-	"mem": 64.0,
-	"instances": 2,
-	"container": {
-		"type": "DOCKER",
-		"docker": {
-			"image": "gliderlabs/registrator:latest",
-			"network": "HOST"
-		},
-		"volumes": [
-			{
-				"containerPath": "/tmp/docker.sock",
-				"hostPath": "/var/run/docker.sock",
-				"mode": "RO"
-			}
-		]
-	},
-	"args": ["consul://127.0.0.1:8500"],
-	"constraints": [["hostname", "UNIQUE"]]
+  "id": "registrator",
+  "cpus": 0.1,
+  "mem": 32.0,
+  "instances": 3,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "gliderlabs/registrator:master",
+      "network": "HOST",
+      "parameters": [
+        {"key": "log-driver", "value": "fluentd"},
+        {"key": "log-opt", "value": "fluentd-tag=docker.registrator"}
+      ]
+    },
+    "volumes": [
+      {
+        "containerPath": "/tmp/docker.sock",
+        "hostPath": "/var/run/docker.sock",
+        "mode": "RO"
+      }
+    ]
+  },
+  "env": {
+    "SERVICE_NAME": "registrator"
+  },
+  "healthChecks": [
+    {
+      "protocol": "COMMAND",
+      "command": {
+        "value": "true"
+      },
+      "gracePeriodSeconds": 120,
+      "intervalSeconds": 10,
+      "timeoutSeconds": 10,
+      "maxConsecutiveFailures": 3
+    }
+  ],
+  "args": ["consul://127.0.0.1:8500"],
+  "constraints": [["hostname", "UNIQUE"]]
 }

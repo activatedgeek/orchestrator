@@ -16,7 +16,8 @@ ansibleGroups = {
   "mesos-master" => [],
   "mesos-slave" => [],
   "consul-server" => [],
-  "consul-agent" => []
+  "consul-agent" => [],
+  "elasticsearch" => []
 }
 
 ansibleHostVars = {}
@@ -34,6 +35,7 @@ Vagrant.configure(2) do |config|
         "zookeeper_id" => m_id
       }
       ansibleGroups["mesos-master"].insert(-1, master.vm.hostname)
+      ansibleGroups["mesos-slave"].insert(-1, master.vm.hostname)
       ansibleGroups["consul-server"].insert(-1, master.vm.hostname)
 
       $IP = $IP.succ
@@ -53,6 +55,9 @@ Vagrant.configure(2) do |config|
       slave.vm.hostname = "mesos-slave-#{s_id}"
       ansibleGroups["mesos-slave"].insert(-1, slave.vm.hostname)
       ansibleGroups["consul-agent"].insert(-1, slave.vm.hostname)
+      if s_id == $MESOS_SLAVE_COUNT
+        ansibleGroups["elasticsearch"].insert(-1, slave.vm.hostname)
+      end
 
       $IP = $IP.succ
       slave.vm.network "private_network", ip: $IP.to_s

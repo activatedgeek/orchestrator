@@ -2,6 +2,7 @@
 - hosts: all
   roles:
     - common
+    - fluentd
 
 ##
 # consul server cluster on all master nodes
@@ -19,30 +20,16 @@
 
 ##
 # Install mesos-master and slave on respective nodes
-# @NOTE: mesos-slave must be stopped on master and mesos-master on slave
-# manually as done below to prevent unncessary master node on every slave
+# @NOTE: mesos slave/master must be stopped appropriately
 ##
 - hosts: mesos-master
   roles:
     - { role: 'mesos', mode: 'master' }
-  tasks:
-    - name: stop mesos-slave
-      become: yes
-      service:
-        name: mesos-slave
-        state: stopped
-        enabled: no
 
 - hosts: mesos-slave
   roles:
     - { role: 'mesos', mode: 'slave' }
-  tasks:
-    - name: stop mesos-master and zk services
-      become: yes
-      service:
-        name: '{{ item }}'
-        state: stopped
-        enabled: no
-      with_items:
-        - mesos-master
-        - zookeeper
+
+- hosts: elasticsearch
+  roles:
+    - elasticsearch

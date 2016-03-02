@@ -1,0 +1,5 @@
+---
+# defaults file for roles/elasticsearch
+network_interface: eth0
+
+elasticsearch_cluster_name: myescluster

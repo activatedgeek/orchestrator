@@ -3,6 +3,7 @@
 consul:
   dc: '{{ consul_datacenter }}'
   data_dir: /opt/consul
+  log_dir: /var/log/consul
   loglevel: INFO
   client_addr: 0.0.0.0
   # all consul agent config jsons go here
