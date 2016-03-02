@@ -1,0 +1,20 @@
+##
+# Basic Configurations for elasticsearch cluster
+# Check other options at <https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-configuration.html>
+#
+---
+cluster.name: {{ elasticsearch.cluster_name }}
+
+node.name: ${HOSTNAME}
+
+network.host: 0.0.0.0
+
+##
+# Use the first host in the group to join the cluster
+##
+discovery.zen.ping.unicast.hosts: ["127.0.0.1", "{{ hostvars[groups['elasticsearch'][0]]['ansible_' + network.interface].ipv4.address }}"]
+
+{% set count = (groups['elasticsearch'])|length %}
+discovery.zen.minimum_master_nodes: {{ (count / 2)|int + 1 }}
+
+gateway.recover_after_nodes: {{ count }}

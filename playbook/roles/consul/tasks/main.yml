@@ -8,7 +8,7 @@
     recurse: yes
   with_items:
     - '{{ consul.conf_dir }}'
-    - /var/log/consul
+    - '{{ consul.log_dir }}'
   tags:
     - consul
 

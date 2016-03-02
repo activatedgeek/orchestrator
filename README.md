@@ -29,7 +29,7 @@ The project depends on the following packages:
 ### Features
 
 **NOTE**: Detailed documentation coming soon!
-([issue](https://github.com/activatedgeek/bare-bones/issues/7))
+([issue](https://github.com/activatedgeek/orchestrator/issues/7))
 
 **NOTE**: Almost all services have a GUI in place with health checks. `Please
 point your system's DNS server to any of the nodes` to get rid of ports in your
@@ -122,8 +122,8 @@ The output will show you the node and ports this service operates at.
 * Fork this repository
 * Create your working branch and develop your feature
 * Submit your pull request
-* Watch out for [issues](https://github.com/activatedgeek/bare-bones/issues)
+* Watch out for [issues](https://github.com/activatedgeek/orchestrator/issues)
 
 ### Problems?
-Raise an [issue](https://github.com/activatedgeek/bare-bones/issues/new)!
+Raise an [issue](https://github.com/activatedgeek/orchestrator/issues/new)!
 I promise I'll reply soon!

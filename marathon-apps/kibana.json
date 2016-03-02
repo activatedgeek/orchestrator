@@ -1,0 +1,36 @@
+{
+  "id": "kibana",
+  "cpus": 0.5,
+  "mem": 300.0,
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "kibana:4",
+      "network": "BRIDGE",
+      "portMappings": [
+        {"containerPort": 5601, "hostPort": 0, "protocol": "tcp"}
+      ],
+      "parameters": [
+        {"key": "log-driver", "value": "fluentd"},
+        {"key": "log-opt", "value": "fluentd-tag=docker.kibana"}
+      ]
+    }
+  },
+  "healthChecks":[
+    {
+      "protocol": "COMMAND",
+      "command": {
+        "value": "curl http://localhost:5601"
+      },
+      "gracePeriodSeconds": 120,
+      "intervalSeconds": 10,
+      "timeoutSeconds": 10,
+      "maxConsecutiveFailures": 3
+    }
+  ],
+  "env": {
+    "SERVICE_NAME": "kibana",
+    "ELASTICSEARCH_URL": "http://192.168.80.4:9200"
+  }
+}
