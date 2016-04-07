@@ -5,7 +5,7 @@ require 'ipaddr'
 $MESOS_MASTER_COUNT = 1
 $MESOS_SLAVE_COUNT = 2
 $IP_CIDR_PREFIX = "192.168.80.0/24"
-$PLAYBOOK = ENV['PLAYBOOK'] || "site.yml"
+$PLAYBOOK = ENV['PLAYBOOK'] || "site"
 
 $IP = IPAddr.new($IP_CIDR_PREFIX)
 # skip first address
@@ -16,15 +16,14 @@ ansibleGroups = {
   "mesos-master" => [],
   "mesos-slave" => [],
   "consul-server" => [],
-  "consul-agent" => [],
-  "elasticsearch" => []
+  "consul-agent" => []
 }
 
 ansibleHostVars = {}
 
 Vagrant.configure(2) do |config|
-  config.vm.box = "ubuntu/trusty64"
-  config.vm.box_check_update = false
+  config.vm.box = "activatedgeek/mesos"
+  # config.vm.box_check_update = false
   config.vm.synced_folder ".", "/vagrant", disabled: true
 
   (1..$MESOS_MASTER_COUNT).each do |m_id|
@@ -55,9 +54,6 @@ Vagrant.configure(2) do |config|
       slave.vm.hostname = "mesos-slave-#{s_id}"
       ansibleGroups["mesos-slave"].insert(-1, slave.vm.hostname)
       ansibleGroups["consul-agent"].insert(-1, slave.vm.hostname)
-      if s_id == $MESOS_SLAVE_COUNT
-        ansibleGroups["elasticsearch"].insert(-1, slave.vm.hostname)
-      end
 
       $IP = $IP.succ
       slave.vm.network "private_network", ip: $IP.to_s
@@ -74,7 +70,7 @@ Vagrant.configure(2) do |config|
       ##
       if s_id == $MESOS_SLAVE_COUNT
         slave.vm.provision :ansible do |ansible|
-          ansible.playbook = "playbook/#{$PLAYBOOK}"
+          ansible.playbook = "playbook/#{$PLAYBOOK}.yml"
           ansible.groups = ansibleGroups
           ansible.host_vars = ansibleHostVars
           ansible.limit = "all"

@@ -1,14 +1,10 @@
 ---
 # tasks file for roles/consul
-- name: create a conf directories for consul
+- name: create a root directory for consul
   become: yes
   file:
-    path: '{{ item }}'
+    path: '{{ consul.data_dir }}'
     state: directory
-    recurse: yes
-  with_items:
-    - '{{ consul.conf_dir }}'
-    - '{{ consul.log_dir }}'
   tags:
     - consul
 
@@ -20,10 +16,10 @@
   tags:
     - dnsmasq
 
-- name: install consul 0.6.3
+- name: install consul 0.6.4
   become: yes
   unarchive:
-    src: https://releases.hashicorp.com/consul/0.6.3/consul_0.6.3_linux_amd64.zip
+    src: https://releases.hashicorp.com/consul/0.6.4/consul_0.6.4_linux_amd64.zip
     dest: /usr/local/bin
     mode: 'u+x'
     copy: no
@@ -52,6 +48,7 @@
     - consul
 
 - include: consul-template.yml
+  when: tmpl is defined and tmpl == True
   tags:
     - consul
     - consul-template
@@ -79,7 +76,7 @@
   become: yes
   template:
     src: dnsmasq-proxy.json.j2
-    dest: '{{ consul.conf_dir }}/dnsmasq-proxy.json'
+    dest: '{{ consul.data_dir }}/{{ mode }}/dnsmasq-proxy.json'
   when: mode is defined
   notify:
     - 'restart consul-{{ mode }}'

@@ -3,15 +3,23 @@
 consul:
   dc: '{{ consul_datacenter }}'
   data_dir: /opt/consul
-  log_dir: /var/log/consul
+
   loglevel: INFO
-  client_addr: 0.0.0.0
-  # all consul agent config jsons go here
-  conf_dir: /opt/consul/conf.d
+
   # all Consul HCLs go here
-  template_conf_dir: /opt/consul/template.conf.d
+  template_conf_dir: '/opt/consul/template.conf.d'
   # all Consul ctmpls go here
-  template_dir: /opt/consul/template.d
+  template_dir: '/opt/consul/templates.d'
+
+consul_server:
+  data_dir: '{{ consul.data_dir }}/server'
+  log_dir: '{{ consul.data_dir }}/server/logs'
+  conf_dir: '{{ consul.data_dir }}/server/conf.d'
+
+consul_agent:
+  data_dir: '{{ consul.data_dir }}/agent'
+  log_dir: '{{ consul.data_dir }}/agent/logs'
+  conf_dir: '{{ consul.data_dir }}/agent/conf.d'
 
 network:
   interface: '{{ network_interface }}'

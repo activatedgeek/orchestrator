@@ -4,10 +4,10 @@
   "server": true,
   "node_name": "{{ ansible_hostname }}",
   "datacenter": "{{ consul.dc }}",
-  "data_dir": "{{ consul.data_dir }}",
+  "data_dir": "{{ consul_server.data_dir }}",
   "log_level": "{{ consul.loglevel }}",
   "bind_addr": "{{ hostvars[ansible_hostname]['ansible_' + network.interface].ipv4.address }}",
-  "client_addr": "{{ consul.client_addr }}",
+  "client_addr": "0.0.0.0",
   "ui": true,
   "bootstrap_expect": {{ consul_server_count }},
   "start_join": ["{{ hostvars[groups['consul-server'][0]]['ansible_' + network.interface].ipv4.address }}"]
