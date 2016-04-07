@@ -29,7 +29,3 @@
 - hosts: mesos-slave
   roles:
     - { role: 'mesos', mode: 'slave' }
-
-- hosts: elasticsearch
-  roles:
-    - elasticsearch
