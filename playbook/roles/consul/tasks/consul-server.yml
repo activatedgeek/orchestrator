@@ -1,11 +1,27 @@
 ---
+- name: create config and logs directory for consul server
+  become: yes
+  file:
+    path: '{{ item }}'
+    state: directory
+  with_items:
+    - '{{ consul_server.data_dir }}'
+    - '{{ consul_server.log_dir }}'
+    - '{{ consul_server.conf_dir }}'
+  tags:
+    - consul-server
+    - consul
+
 - name: setup consul server configuration
   become: yes
   template:
     src: consul-server.json.j2
-    dest: '{{ consul.conf_dir }}/00consul-server.json'
+    dest: '{{ consul_server.conf_dir }}/00consul-server.json'
   notify:
     - restart consul-server
+  tags:
+    - consul-server
+    - consul
 
 - name: start consul-server
   become: yes
@@ -13,3 +29,6 @@
     name: consul-server
     state: started
     enabled: yes
+  tags:
+    - consul-server
+    - consul

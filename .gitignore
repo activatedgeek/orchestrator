@@ -3,5 +3,6 @@ pybin/
 facts_cache/
 temp/
 
+*.retry
 *.config.yml
 !vagrant.config.yml

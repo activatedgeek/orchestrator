@@ -1,5 +1,7 @@
 ## Orchestrator
 
+[![Build Status](https://travis-ci.org/activatedgeek/orchestrator.svg?branch=master)](https://travis-ci.org/activatedgeek/orchestrator)
+
 ***The DevOps swiss-knife***
 
 * Service deployments

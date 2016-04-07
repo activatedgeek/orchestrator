@@ -17,8 +17,3 @@ mesos_clustername: vagrant-cluster
 # Consul datacenter name
 #
 consul_datacenter: vagrant-cluster
-
-##
-# Elasticsearch cluster name
-#
-elasticsearch_cluster_name: vagrant-cluster
