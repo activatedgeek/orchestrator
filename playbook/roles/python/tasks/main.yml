@@ -1,0 +1,24 @@
+##
+# install python
+#
+---
+- name: install python and pip
+  become: yes
+  apt:
+    name: '{{ item }}'
+    state: latest
+    force: yes
+  with_items:
+    - python
+    - python-pip
+  tags:
+    - python
+
+- name: add python requests library
+  become: yes
+  pip:
+    name: requests
+    state: present
+  tags:
+    - python
+    - requests

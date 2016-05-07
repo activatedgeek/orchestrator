@@ -1,28 +1,25 @@
-##
-# A sample generic purpose inventory file
-#
+# Sample inventory file
 
-##
 # Mesos Masters
-##
-mesos-master-1 ansible_ssh_host=mesos-master-1-IP zookeeper_id=1
+mesos-master-1 zookeeper_id=1
 
-##
 # Mesos Slaves
-##
-mesos-slave-1 ansible_ssh_host=mesos-slave-1-IP
-mesos-slave-2 ansible_ssh_host=mesos-slave-2-IP
+mesos-slave-1
 
+
+# Group Definitions
 [mesos-master]
 mesos-master-1
 
 [mesos-slave]
+mesos-master-1
 mesos-slave-1
-mesos-slave-2
 
 [consul-server]
 mesos-master-1
 
 [consul-agent]
 mesos-slave-1
-mesos-slave-2
+
+[bastion]
+mesos-master-1

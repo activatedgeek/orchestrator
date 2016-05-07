@@ -26,6 +26,16 @@
   tags:
     - docker
 
+- name: setup docker defaults file
+  become: yes
+  template:
+    src: defaults.j2
+    dest: /etc/default/docker
+  notify:
+    - restart docker
+  tags:
+    - docker
+
 - name: add docker group for non-sudo access
   become: yes
   group:
@@ -45,13 +55,11 @@
   tags:
     - docker
 
-- name: add default DNS options for containers
+- name: add docker-py python library
   become: yes
-  template:
-    src: defaults.j2
-    dest: /etc/default/docker
-  notify:
-    - restart docker
+  pip:
+    name: docker-py
+    state: present
   tags:
     - docker
 

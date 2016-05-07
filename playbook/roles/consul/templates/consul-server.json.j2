@@ -5,6 +5,7 @@
   "node_name": "{{ ansible_hostname }}",
   "datacenter": "{{ consul.dc }}",
   "data_dir": "{{ consul_server.data_dir }}",
+  "domain": "{{ consul.domain }}",
   "log_level": "{{ consul.loglevel }}",
   "bind_addr": "{{ hostvars[ansible_hostname]['ansible_' + network.interface].ipv4.address }}",
   "client_addr": "0.0.0.0",

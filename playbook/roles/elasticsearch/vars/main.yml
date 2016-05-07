@@ -1,7 +1,0 @@
----
-# variables for roles/elasticsearch
-network:
-  interface: '{{ network_interface }}'
-
-elasticsearch:
-  cluster_name: '{{ elasticsearch_cluster_name }}'

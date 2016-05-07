@@ -65,3 +65,13 @@
   tags:
     - mesos
     - mesos-slave
+
+- name: add a cron job for old container cleanup
+  become: yes
+  cron:
+    name: cleanup containers
+    special_time: hourly
+    job: 'docker rm `docker ps -a -q` > /dev/null'
+  tags:
+    - mesos
+    - cron

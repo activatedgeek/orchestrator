@@ -1,0 +1,12 @@
+#
+# variables for the marathon-apps role
+#
+---
+marathon:
+  app_dir: '{{ ansible_user_dir }}/.marathon-apps'
+
+network:
+  interface: '{{ network_interface }}'
+
+consul:
+  dc: '{{ consul_datacenter }}'

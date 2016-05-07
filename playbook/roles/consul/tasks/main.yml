@@ -8,14 +8,6 @@
   tags:
     - consul
 
-- name: install dnsmasq
-  become: yes
-  apt:
-    name: dnsmasq
-    state: latest
-  tags:
-    - dnsmasq
-
 - name: install consul 0.6.4
   become: yes
   unarchive:
@@ -52,33 +44,3 @@
   tags:
     - consul
     - consul-template
-
-- name: enable DNS proxy for consul
-  become: yes
-  copy:
-    content: server=/consul/127.0.0.1#8600
-    dest: /etc/dnsmasq.d/10-consul
-  notify:
-    - restart dnsmasq
-  tags:
-    - dnsmasq
-
-- name: check dnsmasq online
-  become: yes
-  service:
-    name: dnsmasq
-    state: started
-    enabled: yes
-  tags:
-    - dnsmasq
-
-- name: add dnsmasq proxy service check to consul
-  become: yes
-  template:
-    src: dnsmasq-proxy.json.j2
-    dest: '{{ consul.data_dir }}/{{ mode }}/dnsmasq-proxy.json'
-  when: mode is defined
-  notify:
-    - 'restart consul-{{ mode }}'
-  tags:
-    - dnsmasq

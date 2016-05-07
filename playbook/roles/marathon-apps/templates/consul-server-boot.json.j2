@@ -1,0 +1,29 @@
+{
+  "id": "consul-server-boot",
+  "cpus": 0.1,
+  "mem": 32.0,
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "activatedgeek/consul",
+      "network": "HOST"
+    }
+  },
+  "healthChecks": [
+    {
+      "port": 8301,
+      "protocol": "TCP",
+      "gracePeriodSeconds": 300,
+      "intervalSeconds": 60,
+      "timeoutSeconds": 20,
+      "maxConsecutiveFailures": 3
+    }
+  ],
+  "args": ["server"],
+  "constraints": [["hostname", "UNIQUE"]],
+  "env": {
+    "DATACENTER": "{{ consul.dc }}",
+    "NETWORK_INTERFACE": "{{ network.interface }}"
+  }
+}

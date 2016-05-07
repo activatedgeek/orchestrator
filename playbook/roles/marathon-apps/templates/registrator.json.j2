@@ -1,17 +1,14 @@
+{% set mesos_slave_count = (groups['mesos-slave'])|length %}
 {
   "id": "registrator",
   "cpus": 0.1,
   "mem": 32.0,
-  "instances": 3,
+  "instances": {{ mesos_slave_count }},
   "container": {
     "type": "DOCKER",
     "docker": {
       "image": "gliderlabs/registrator:master",
-      "network": "HOST",
-      "parameters": [
-        {"key": "log-driver", "value": "fluentd"},
-        {"key": "log-opt", "value": "fluentd-tag=docker.registrator"}
-      ]
+      "network": "HOST"
     },
     "volumes": [
       {
@@ -20,9 +17,6 @@
         "mode": "RO"
       }
     ]
-  },
-  "env": {
-    "SERVICE_NAME": "registrator"
   },
   "healthChecks": [
     {

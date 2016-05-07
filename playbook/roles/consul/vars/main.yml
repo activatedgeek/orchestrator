@@ -3,6 +3,8 @@
 consul:
   dc: '{{ consul_datacenter }}'
   data_dir: /opt/consul
+  # end with a '.'
+  domain: "consul."
 
   loglevel: INFO
 
