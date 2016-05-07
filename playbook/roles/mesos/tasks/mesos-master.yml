@@ -1,16 +1,12 @@
 ---
-- name: install marathon and chronos on master nodes
+- name: install marathon on master nodes
   become: yes
   apt:
-    name: '{{ item }}'
+    name: marathon
     state: latest
     update_cache: yes
-  with_items:
-    - marathon
-    - chronos
   tags:
     - marathon
-    - chronos
 
 - name: setup zookeeper master id
   become: yes
@@ -90,20 +86,15 @@
   tags:
     - marathon
 
-- name: setup marathon, chronos hostname, ip
+- name: setup marathon hostname
   become: yes
   template:
     src: mesos-master.hostname.j2
-    dest: '{{ item }}'
-  with_items:
-    - /etc/marathon/conf/hostname
-    - /etc/chronos/conf/hostname
+    dest: /etc/marathon/conf/hostname
   notify:
     - restart marathon
-    - restart chronos
   tags:
     - marathon
-    - chronos
 
 - name: update executor timeout for docker
   become: yes
@@ -129,15 +120,11 @@
     - mesos
     - mesos-master
 
-- name: check for marathon, chronos online
+- name: check for marathon online
   become: yes
   service:
-    name: '{{ item }}'
+    name: marathon
     state: started
     enabled: yes
-  with_items:
-    - marathon
-    - chronos
   tags:
     - marathon
-    - chronos

@@ -32,3 +32,16 @@
   tags:
     - common
     - hostsfile
+
+# fix for swap capabilities
+- name: update grub boot default configuration
+  become: yes
+  lineinfile:
+    dest: /etc/default/grub
+    regexp: ^GRUB_CMDLINE_LINUX_DEFAULT=
+    line: GRUB_CMDLINE_LINUX_DEFAULT="cgroup_enable=memory swapaccount=1"
+    state: present
+  notify: update grub
+  tags:
+    - common
+    - grub

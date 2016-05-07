@@ -1,0 +1,33 @@
+{# Get count of mesos slaves #}
+{% set mesos_slave_count = (groups['mesos-slave'])|length %}
+{# Get the first node from consul-server cluster #}
+{% set consul_server_ip = hostvars[groups['consul-server'][0]]['ansible_' + network.interface].ipv4.address %}
+{
+  "id": "consul-agent",
+  "cpus": 0.1,
+  "mem": 32.0,
+  "instances": {{ mesos_slave_count }},
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "activatedgeek/consul",
+      "network": "HOST"
+    }
+  },
+  "healthChecks": [
+    {
+      "port": 8301,
+      "protocol": "TCP",
+      "gracePeriodSeconds": 300,
+      "intervalSeconds": 60,
+      "timeoutSeconds": 20,
+      "maxConsecutiveFailures": 3
+    }
+  ],
+  "args": ["agent", "{{ consul_server_ip }}"],
+  "constraints": [["hostname", "UNIQUE"]],
+  "env": {
+    "DATACENTER": "{{ consul.dc }}",
+    "NETWORK_INTERFACE": "{{ network.interface }}"
+  }
+}

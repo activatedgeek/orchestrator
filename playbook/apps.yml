@@ -1,0 +1,8 @@
+##
+# Setup the bastion node with marathon app configurations
+#
+---
+
+- hosts: bastion
+  roles:
+    - marathon-apps

@@ -67,15 +67,30 @@ except for SSH access.
 
 ### Usage
 
-To bootstrap the cluster and enable a `registrator` container on each slave node:
+To bootstrap the cluster
 ```
 > vagrant up
-> make registrator
 ```
 
 To provision the cluster (should be already done once you do `vagrant up`):
 ```
-> make provision
+> vagrant provision
+```
+
+**NOTE**: In case of reconfiguring the cluster, you need to delete the
+temporary files for new configurations to take place. The following commands
+need to be run:
+
+For all Mesos Master nodes:
+```
+# rm -rf /tmp/mesos/
+# sudo service mesos-master restart
+```
+
+For all Mesos Slave nodes:
+```
+# rm -rf /tmp/mesos/
+# sudo service mesos-slave restart
 ```
 
 #### Create A Sample service

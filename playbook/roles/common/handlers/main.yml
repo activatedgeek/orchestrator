@@ -1,0 +1,5 @@
+---
+# handlers file for roles/common
+- name: update grub
+  become: yes
+  shell: update-grub

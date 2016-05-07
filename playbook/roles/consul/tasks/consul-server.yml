@@ -32,3 +32,9 @@
   tags:
     - consul-server
     - consul
+
+# use dnsmasq to proxy DNS calls
+- include: dnsmasq.yml
+  when: dnsmasq is defined and dnsmasq == True
+  tags:
+    - consul

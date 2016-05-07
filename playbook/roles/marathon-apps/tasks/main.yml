@@ -1,0 +1,23 @@
+##
+# marathon-apps role
+#
+---
+- name: create marathon apps directory
+  file:
+    path: '{{ marathon.app_dir }}'
+    state: directory
+  tags:
+    - marathon-apps
+
+- name: setup marathon apps
+  template:
+    src: '{{ item }}.json.j2'
+    dest: '{{ marathon.app_dir }}/{{ item }}.json'
+  with_items:
+    - consul-server-boot
+    - consul-agent
+    - dnsmasq
+    - registrator
+    - registry
+  tags:
+    - marathon-apps
