@@ -1,8 +1,0 @@
----
-# handlers file for roles/docker
-- name: restart elasticsearch
-  become: yes
-  service:
-    name: elasticsearch
-    state: restarted
-    enabled: yes
