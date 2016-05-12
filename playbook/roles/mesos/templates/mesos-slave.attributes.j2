@@ -1,0 +1,2 @@
+{% set is_master = 'yes' if inventory_hostname in groups['mesos-master'] else 'no' %}
+master:{{ is_master }};{{ mesos.slave.attributes }}

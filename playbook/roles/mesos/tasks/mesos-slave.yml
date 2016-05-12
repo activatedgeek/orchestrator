@@ -48,8 +48,8 @@
 
 - name: add attributes for mesos-slave
   become: yes
-  copy:
-    content: '{{ mesos.slave.attributes }}'
+  template:
+    src: mesos-slave.attributes.j2
     dest: /etc/mesos-slave/attributes
   notify:
     - restart mesos-slave
