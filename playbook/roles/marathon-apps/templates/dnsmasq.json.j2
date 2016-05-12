@@ -1,6 +1,6 @@
 {% set mesos_slave_count = (groups['mesos-slave'])|length %}
 {
-  "id": "dnsmasq",
+  "id": "/core/dnsmasq",
   "cpus": 0.1,
   "mem": 32.0,
   "instances": {{ mesos_slave_count }},

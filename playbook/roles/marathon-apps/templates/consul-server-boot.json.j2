@@ -1,5 +1,5 @@
 {
-  "id": "consul-server-boot",
+  "id": "/core/consul-server-boot",
   "cpus": 0.1,
   "mem": 32.0,
   "instances": 1,
@@ -21,7 +21,7 @@
     }
   ],
   "args": ["server"],
-  "constraints": [["hostname", "UNIQUE"]],
+  "constraints": [["master", "LIKE", "yes"]],
   "env": {
     "DATACENTER": "{{ consul.dc }}",
     "NETWORK_INTERFACE": "{{ network.interface }}"
