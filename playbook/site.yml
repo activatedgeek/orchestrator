@@ -3,10 +3,10 @@
   roles:
     - common
 
-# consul server cluster on all master nodes (only if maters are not slaves as well)
-# - hosts: consul-server
-#   roles:
-#     - { role: 'consul', mode: 'server' }
+# pre-setup consul server cluster on all master nodes
+- hosts: consul-server
+  roles:
+    - { role: 'consul', mode: 'server' }
 
 # @WARNING: mesos slave/master must be stopped manually to prevent useless CPU usage
 - hosts: mesos-master

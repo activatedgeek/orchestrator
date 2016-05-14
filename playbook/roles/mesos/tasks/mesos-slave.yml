@@ -71,7 +71,7 @@
   cron:
     name: cleanup containers
     special_time: hourly
-    job: 'docker rm `docker ps -a -q` > /dev/null'
+    job: 'docker rm `docker ps -aq` > /dev/null'
   tags:
     - mesos
     - cron

@@ -11,7 +11,7 @@
 
 - name: setup marathon core apps
   template:
-    src: core.json.j2
+    src: core/core.json.j2
     dest: '{{ marathon.app_dir }}/core.json'
   tags:
     - marathon-core

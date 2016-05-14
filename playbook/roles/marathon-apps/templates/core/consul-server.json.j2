@@ -1,12 +1,10 @@
-{# Get count of mesos slaves #}
-{% set mesos_slave_count = (groups['mesos-slave'])|length %}
 {# Get the first node from consul-server cluster #}
 {% set consul_server_ip = hostvars[groups['consul-server'][0]]['ansible_' + network.interface].ipv4.address %}
 {
   "id": "/core/consul-server",
   "cpus": 0.1,
   "mem": 32.0,
-  "instances": {{ mesos_slave_count }},
+  "instances": 1,
   "container": {
     "type": "DOCKER",
     "docker": {
