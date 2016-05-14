@@ -48,8 +48,8 @@
 
 - name: add attributes for mesos-slave
   become: yes
-  copy:
-    content: '{{ mesos.slave.attributes }}'
+  template:
+    src: mesos-slave.attributes.j2
     dest: /etc/mesos-slave/attributes
   notify:
     - restart mesos-slave
@@ -71,7 +71,7 @@
   cron:
     name: cleanup containers
     special_time: hourly
-    job: 'docker rm `docker ps -a -q` > /dev/null'
+    job: 'docker rm `docker ps -aq` > /dev/null'
   tags:
     - mesos
     - cron

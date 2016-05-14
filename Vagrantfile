@@ -3,7 +3,7 @@
 require 'ipaddr'
 
 $MESOS_MASTER_COUNT = 1
-$MESOS_SLAVE_COUNT = 1
+$MESOS_SLAVE_COUNT = 2
 $IP_CIDR_PREFIX = "192.168.80.0/24"
 $PLAYBOOK = ENV['PLAYBOOK'] || "site"
 $TAGS = ENV['TAGS'] || "all"
@@ -37,7 +37,6 @@ Vagrant.configure(2) do |config|
         "zookeeper_id" => m_id
       }
       ansibleGroups["mesos-master"].insert(-1, master.vm.hostname)
-      ansibleGroups["mesos-slave"].insert(-1, master.vm.hostname)
       ansibleGroups["consul-server"].insert(-1, master.vm.hostname)
       if m_id == 1
         ansibleGroups["bastion"].insert(-1, master.vm.hostname)
@@ -50,7 +49,7 @@ Vagrant.configure(2) do |config|
         vb.name = master.vm.hostname
         vb.gui = false
         vb.cpus = 1
-        vb.memory = "1536"
+        vb.memory = "768"
       end
     end
   end
@@ -67,7 +66,7 @@ Vagrant.configure(2) do |config|
         vb.name = slave.vm.hostname
         vb.gui = false
         vb.cpus = 1
-        vb.memory = "1536"
+        vb.memory = "1792"
       end
 
       ##

@@ -1,0 +1,8 @@
+{
+"id": "/core",
+"apps": [
+{% include 'consul-agent.json.j2' %},
+{% include 'registrator.json.j2' %},
+{% include 'dnsmasq.json.j2' %}
+]
+}

@@ -3,7 +3,7 @@
 {# Get the first node from consul-server cluster #}
 {% set consul_server_ip = hostvars[groups['consul-server'][0]]['ansible_' + network.interface].ipv4.address %}
 {
-  "id": "consul-agent",
+  "id": "/core/consul-agent",
   "cpus": 0.1,
   "mem": 32.0,
   "instances": {{ mesos_slave_count }},

@@ -1,18 +1,25 @@
 {% set mesos_slave_count = (groups['mesos-slave'])|length %}
 {
-  "id": "dnsmasq",
+  "id": "/core/registrator",
+  "dependencies": [
+    "/core/consul-agent"
+  ],
   "cpus": 0.1,
   "mem": 32.0,
   "instances": {{ mesos_slave_count }},
   "container": {
     "type": "DOCKER",
     "docker": {
-      "image": "andyshinn/dnsmasq:latest",
-      "network": "HOST",
-      "parameters": [
-        { "key": "cap-add", "value": "NET_ADMIN" }
-      ]
-    }
+      "image": "gliderlabs/registrator:master",
+      "network": "HOST"
+    },
+    "volumes": [
+      {
+        "containerPath": "/tmp/docker.sock",
+        "hostPath": "/var/run/docker.sock",
+        "mode": "RO"
+      }
+    ]
   },
   "healthChecks": [
     {
@@ -26,6 +33,6 @@
       "maxConsecutiveFailures": 3
     }
   ],
-  "args": ["-S", "/consul/127.0.0.1#8600", "--log-facility=-"],
+  "args": ["consul://127.0.0.1:8500"],
   "constraints": [["hostname", "UNIQUE"]]
 }

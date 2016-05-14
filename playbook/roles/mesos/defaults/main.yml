@@ -4,4 +4,5 @@ network_interface: eth0
 
 mesos_clustername: mycluster
 
+# in the form "key1:value1;key2:value2;"
 mesos_slave_attributes: ''

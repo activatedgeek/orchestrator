@@ -9,15 +9,10 @@
   tags:
     - marathon-apps
 
-- name: setup marathon apps
+- name: setup marathon core apps
   template:
-    src: '{{ item }}.json.j2'
-    dest: '{{ marathon.app_dir }}/{{ item }}.json'
-  with_items:
-    - consul-server-boot
-    - consul-agent
-    - dnsmasq
-    - registrator
-    - registry
+    src: core/core.json.j2
+    dest: '{{ marathon.app_dir }}/core.json'
   tags:
+    - marathon-core
     - marathon-apps
