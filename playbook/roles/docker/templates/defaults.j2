@@ -2,4 +2,4 @@
 
 # Use DOCKER_OPTS to modify the daemon startup options.
 # OverlayFS as the storage driver
-DOCKER_OPTS="-s overlay --dns {{ hostvars[ansible_hostname]['ansible_' + network.interface].ipv4.address }}"
+DOCKER_OPTS="-s overlay --dns {{ hostvars[inventory_hostname]['ansible_' + network.interface].ipv4.address }}"
