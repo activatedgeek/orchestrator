@@ -4,6 +4,6 @@
   "data_dir": "{{ consul.data_dir }}",
   "domain": "{{ consul.domain }}",
   "log_level": "{{ consul.loglevel }}",
-  "bind_addr": "{{ hostvars[ansible_hostname]['ansible_' + network.interface].ipv4.address }}",
+  "bind_addr": "{{ hostvars[inventory_hostname]['ansible_' + network.interface].ipv4.address }}",
   "start_join": ["{{ hostvars[groups['consul-server'][0]]['ansible_' + network.interface].ipv4.address }}"]
 }

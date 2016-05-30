@@ -1,1 +1,1 @@
-{{ hostvars[ansible_hostname]['ansible_' + network.interface].ipv4.address }}
+{{ hostvars[inventory_hostname]['ansible_' + network.interface].ipv4.address }}
