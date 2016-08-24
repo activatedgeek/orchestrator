@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/activatedgeek/orchestrator.svg?branch=master)](https://travis-ci.org/activatedgeek/orchestrator)
 
+**NOTE**: This project has been retired. Fortunately/Unfortunately [DC/OS](https://dcos.io) was made Open Source. :)
+
 ***The DevOps swiss-knife***
 
 * Service deployments
@@ -18,8 +20,6 @@ about DevOps again!
 
 A vagrant cluster has been provided as a proof-of-concept showing the
 basic capabilities of the system.
-
-**Under active development. Cheers!**
 
 ### Prerequisites
 
